@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package dns_service;
+
+message Message {
+  string body = 1;
+}
+
+service DnsService {
+  rpc SayHello(Message) returns (Message) {}
+}
