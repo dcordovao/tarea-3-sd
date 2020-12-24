@@ -11,12 +11,12 @@ import (
 
 func main() {
 
-	lis, err := net.Listen("tcp", ":9000")
+	lis, err := net.Listen("tcp", ":9001")
 	if err != nil {
-		log.Fatalf("Failed to listen on port 9000: %v", err)
+		log.Fatalf("Failed to listen on port 9001: %v", err)
 	}
 
-	fmt.Println("Escuchando en el puerto 9000...")
+	fmt.Println("Escuchando en el puerto 9001...")
 
 	// Setear server
 	s := dns_service.Server{}

@@ -76,18 +76,90 @@ func (x *Message) GetBody() string {
 	return ""
 }
 
+type NewName struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name   string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Domain string `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Ip     string `protobuf:"bytes,3,opt,name=ip,proto3" json:"ip,omitempty"`
+}
+
+func (x *NewName) Reset() {
+	*x = NewName{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dns_service_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NewName) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NewName) ProtoMessage() {}
+
+func (x *NewName) ProtoReflect() protoreflect.Message {
+	mi := &file_dns_service_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NewName.ProtoReflect.Descriptor instead.
+func (*NewName) Descriptor() ([]byte, []int) {
+	return file_dns_service_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *NewName) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *NewName) GetDomain() string {
+	if x != nil {
+		return x.Domain
+	}
+	return ""
+}
+
+func (x *NewName) GetIp() string {
+	if x != nil {
+		return x.Ip
+	}
+	return ""
+}
+
 var File_dns_service_proto protoreflect.FileDescriptor
 
 var file_dns_service_proto_rawDesc = []byte{
 	0x0a, 0x11, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x12, 0x0b, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
 	0x22, 0x1d, 0x0a, 0x07, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x62,
-	0x6f, 0x64, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x32,
-	0x46, 0x0a, 0x0a, 0x44, 0x6e, 0x73, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x38, 0x0a,
-	0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f,
-	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a,
-	0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65,
-	0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x64, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x22,
+	0x45, 0x0a, 0x07, 0x4e, 0x65, 0x77, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61,
+	0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16,
+	0x0a, 0x06, 0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x70, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x02, 0x69, 0x70, 0x32, 0x82, 0x01, 0x0a, 0x0a, 0x44, 0x6e, 0x73, 0x53, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c,
+	0x6f, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
+	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12,
+	0x3a, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x2e,
+	0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4e, 0x65, 0x77, 0x4e,
+	0x61, 0x6d, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -102,15 +174,18 @@ func file_dns_service_proto_rawDescGZIP() []byte {
 	return file_dns_service_proto_rawDescData
 }
 
-var file_dns_service_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_dns_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_dns_service_proto_goTypes = []interface{}{
 	(*Message)(nil), // 0: dns_service.Message
+	(*NewName)(nil), // 1: dns_service.NewName
 }
 var file_dns_service_proto_depIdxs = []int32{
 	0, // 0: dns_service.DnsService.SayHello:input_type -> dns_service.Message
-	0, // 1: dns_service.DnsService.SayHello:output_type -> dns_service.Message
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	1, // 1: dns_service.DnsService.CreateName:input_type -> dns_service.NewName
+	0, // 2: dns_service.DnsService.SayHello:output_type -> dns_service.Message
+	0, // 3: dns_service.DnsService.CreateName:output_type -> dns_service.Message
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -134,6 +209,18 @@ func file_dns_service_proto_init() {
 				return nil
 			}
 		}
+		file_dns_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NewName); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -141,7 +228,7 @@ func file_dns_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dns_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -168,6 +255,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DnsServiceClient interface {
 	SayHello(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
+	CreateName(ctx context.Context, in *NewName, opts ...grpc.CallOption) (*Message, error)
 }
 
 type dnsServiceClient struct {
@@ -187,9 +275,19 @@ func (c *dnsServiceClient) SayHello(ctx context.Context, in *Message, opts ...gr
 	return out, nil
 }
 
+func (c *dnsServiceClient) CreateName(ctx context.Context, in *NewName, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, "/dns_service.DnsService/CreateName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DnsServiceServer is the server API for DnsService service.
 type DnsServiceServer interface {
 	SayHello(context.Context, *Message) (*Message, error)
+	CreateName(context.Context, *NewName) (*Message, error)
 }
 
 // UnimplementedDnsServiceServer can be embedded to have forward compatible implementations.
@@ -198,6 +296,9 @@ type UnimplementedDnsServiceServer struct {
 
 func (*UnimplementedDnsServiceServer) SayHello(context.Context, *Message) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+}
+func (*UnimplementedDnsServiceServer) CreateName(context.Context, *NewName) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateName not implemented")
 }
 
 func RegisterDnsServiceServer(s *grpc.Server, srv DnsServiceServer) {
@@ -222,6 +323,24 @@ func _DnsService_SayHello_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DnsService_CreateName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewName)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DnsServiceServer).CreateName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dns_service.DnsService/CreateName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DnsServiceServer).CreateName(ctx, req.(*NewName))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _DnsService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "dns_service.DnsService",
 	HandlerType: (*DnsServiceServer)(nil),
@@ -229,6 +348,10 @@ var _DnsService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SayHello",
 			Handler:    _DnsService_SayHello_Handler,
+		},
+		{
+			MethodName: "CreateName",
+			Handler:    _DnsService_CreateName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
