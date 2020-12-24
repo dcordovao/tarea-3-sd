@@ -1,4 +1,4 @@
-# sd-tarea2
+# sd-tarea3
 Tarea sobre consistencia implementando un sistema DNS
 
 ## Integrantes
