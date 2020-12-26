@@ -13,6 +13,35 @@ import (
 type Server struct {
 }
 
+func check_if_name_in_domain(file_name string, new_name string) bool {
+	previusly_created := false
+
+	file, err := os.Open(file_name)
+	if err != nil {
+		log.Fatalf("failed opening file: %s", err)
+	}
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var txtlines []string
+
+	for scanner.Scan() {
+		txtlines = append(txtlines, scanner.Text())
+	}
+
+	file.Close()
+
+	for _, eachline := range txtlines[1:] {
+		//fmt.Println(eachline)
+		lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
+		if lname == new_name {
+			previusly_created = true
+			continue
+		}
+	}
+	return previusly_created
+}
+
 //////   Esta función era del tutorial pero la dejamos    ///////
 //////   para ratificar la conexion con el servidor       ///////
 func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, error) {
@@ -38,31 +67,8 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, err
 		defer f.Close()
 	} else {
 		// Leer el archivo, leer linea por linea, y si el nombre no existe es creado.}
-		previusly_created := false
 
-		file, err := os.Open(file_name)
-		if err != nil {
-			log.Fatalf("failed opening file: %s", err)
-		}
-
-		scanner := bufio.NewScanner(file)
-		scanner.Split(bufio.ScanLines)
-		var txtlines []string
-
-		for scanner.Scan() {
-			txtlines = append(txtlines, scanner.Text())
-		}
-
-		file.Close()
-
-		for _, eachline := range txtlines[1:] {
-			//fmt.Println(eachline)
-			lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
-			if lname == nombre.Name {
-				previusly_created = true
-				continue
-			}
-		}
+		previusly_created := check_if_name_in_domain(file_name, nombre.Name)
 
 		// Si el nombre no existia en el dominio no existia, se puede crear crea
 		if !previusly_created {
