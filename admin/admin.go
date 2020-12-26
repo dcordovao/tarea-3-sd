@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"strings"
 
@@ -17,10 +18,25 @@ import (
 	//"strconv" // Conversion de strings a int y viceversa
 )
 
+// Validar si una IP es valida
+func checkIPAddress(ip string) bool {
+	if net.ParseIP(ip) == nil {
+		fmt.Printf("IP Address: %s - Invalida\n", ip)
+		return false
+	} else {
+		//fmt.Printf("IP Address: %s - Valida\n", ip)
+		return true
+	}
+}
+
+func verificar_nombre() {
+
+}
+
 func main() {
 
 	//------------------------------------------------------
-	//////// Conectarse como cliente al NameService ////////
+	//////// Conectarse como admin ////////
 	//------------------------------------------------------
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
@@ -46,7 +62,7 @@ func main() {
 	fmt.Println("")
 	fmt.Println("---------------------")
 	fmt.Println("Admin Shell")
-  	fmt.Println("---------------------")
+	fmt.Println("---------------------")
 
 	for true {
 		//// OPCIONES A ELEGIR ////
@@ -66,7 +82,7 @@ func main() {
 		/// Create: create <nombre.dominio> <ip>
 		if option == "create" {
 			if len(params) != 3 {
-				log.Printf("ERROR!, comando create debería tener 3 parametros...")
+				fmt.Println("Cuidado!, comando create debería tener 3 parametros...")
 				continue
 			}
 
@@ -76,14 +92,17 @@ func main() {
 			name := params[1]
 			name_split := strings.Split(name, ".")
 			if len(name_split) != 2 {
-				log.Printf("ERROR! nombre.dominio mal formateado...")
+				fmt.Println("Cuidado! nombre.dominio mal formateado...")
 				continue
 			}
 
-			// Aqui comprobar si la IP esta biem formateada
+			new_ip := params[2]
+			if !checkIPAddress(new_ip) {
+				continue
+			}
 
 			// Enviar al servidor dns el nombre que se quiere crear
-			new_name := dns_service.NewName{Name: name_split[0], Domain: name_split[1], Ip: params[2]}
+			new_name := dns_service.NewName{Name: name_split[0], Domain: name_split[1], Ip: new_ip}
 
 			var conn_dns *grpc.ClientConn
 			conn_dns, err := grpc.Dial(ip_dns, grpc.WithInsecure())
