@@ -61,10 +61,11 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, err
 			fmt.Println(err)
 			os.Exit(1)
 		}
+		defer f.Close()
 		// Al crear el dominio seteamos su reloj en 0 0 0
 		f.WriteString("0 0 0\n")
 		f.WriteString(nombre.Name + "." + nombre.Domain + " IN A " + nombre.Ip)
-		defer f.Close()
+
 	} else {
 		// Leer el archivo, leer linea por linea, y si el nombre no existe es creado.}
 
@@ -89,4 +90,76 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, err
 
 	return &Message{Body: "Nombre creado con exito"}, nil
 
+}
+
+// Suponemos que al actualziar nombre, se da solo "nombre", y el dominio siempre se mantiene
+func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message, error) {
+	file_name := "servidor_dns/zf_files/" + update_info.Domain
+	// Chequear si el dominio existe. Esto es true si no existe
+	if _, err := os.Stat(file_name); os.IsNotExist(err) {
+		return &Message{Body: "ERROR! Ese dominio no existe..."}, nil
+	}
+	// Si ya existe el archivo, lo leemos en busca del nombre que queremos modificar
+	file, err := os.Open(file_name)
+	if err != nil {
+		log.Fatalf("failed opening file: %s", err)
+	}
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var txtlines []string
+
+	for scanner.Scan() {
+		txtlines = append(txtlines, scanner.Text())
+	}
+
+	file.Close()
+
+	// Leer linea por linea para buscar un nombre que coincida
+	previusly_created := false
+	var index int
+	for i, eachline := range txtlines[1:] {
+		//fmt.Println(eachline)
+		lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
+		if lname == update_info.Name {
+			index = i + 1 // Se suma 1 porque se había omitido la primera linea
+			previusly_created = true
+			continue
+		}
+	}
+
+	// Si se encontro la linea la modificamos
+	if previusly_created {
+		if update_info.Opt == "name" {
+			antigua_ip := strings.Split(txtlines[index], " ")[3]
+			new_line := update_info.Value + "." + update_info.Domain + " IN A " + antigua_ip
+			txtlines[index] = new_line
+		} else {
+			new_line := update_info.Name + "." + update_info.Domain + " IN A " + update_info.Value
+			txtlines[index] = new_line
+		}
+		// Luego de extraer la linea y modificarla, borramos el arhivo y lo escribimos denuevo
+
+		e := os.Remove(file_name)
+		if e != nil {
+			log.Fatal(e)
+		}
+
+		f, err := os.Create(file_name)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		defer f.Close()
+		// Al crear el dominio seteamos su reloj en 0 0 0
+		n_lines := len(txtlines)
+		for _, eachline := range txtlines[:n_lines-1] {
+			f.WriteString(eachline + "\n")
+		}
+		f.WriteString(txtlines[n_lines-1])
+	} else {
+		return &Message{Body: "ERROR! No se encontre ese nombre en el dominio..."}, nil
+	}
+
+	return &Message{Body: "Información actualizada con exito!"}, nil
 }

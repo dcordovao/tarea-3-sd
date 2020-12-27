@@ -139,6 +139,77 @@ func (x *NewName) GetIp() string {
 	return ""
 }
 
+type UpdateInfo struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name   string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Domain string `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Opt    string `protobuf:"bytes,3,opt,name=opt,proto3" json:"opt,omitempty"`
+	Value  string `protobuf:"bytes,4,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *UpdateInfo) Reset() {
+	*x = UpdateInfo{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dns_service_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateInfo) ProtoMessage() {}
+
+func (x *UpdateInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_dns_service_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateInfo.ProtoReflect.Descriptor instead.
+func (*UpdateInfo) Descriptor() ([]byte, []int) {
+	return file_dns_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UpdateInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateInfo) GetDomain() string {
+	if x != nil {
+		return x.Domain
+	}
+	return ""
+}
+
+func (x *UpdateInfo) GetOpt() string {
+	if x != nil {
+		return x.Opt
+	}
+	return ""
+}
+
+func (x *UpdateInfo) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
 var File_dns_service_proto protoreflect.FileDescriptor
 
 var file_dns_service_proto_rawDesc = []byte{
@@ -150,16 +221,25 @@ var file_dns_service_proto_rawDesc = []byte{
 	0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16,
 	0x0a, 0x06, 0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
 	0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x70, 0x18, 0x03, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x02, 0x69, 0x70, 0x32, 0x82, 0x01, 0x0a, 0x0a, 0x44, 0x6e, 0x73, 0x53, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c,
-	0x6f, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
-	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12,
-	0x3a, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x2e,
-	0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4e, 0x65, 0x77, 0x4e,
-	0x61, 0x6d, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x28, 0x09, 0x52, 0x02, 0x69, 0x70, 0x22, 0x60, 0x0a, 0x0a, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x49, 0x6e, 0x66, 0x6f, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x64, 0x6f, 0x6d, 0x61,
+	0x69, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e,
+	0x12, 0x10, 0x0a, 0x03, 0x6f, 0x70, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6f,
+	0x70, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x32, 0xbd, 0x01, 0x0a, 0x0a, 0x44, 0x6e, 0x73,
+	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65,
+	0x6c, 0x6c, 0x6f, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22,
+	0x00, 0x12, 0x3a, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x12,
+	0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4e, 0x65,
+	0x77, 0x4e, 0x61, 0x6d, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x39, 0x0a,
+	0x06, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x17, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x49, 0x6e, 0x66, 0x6f,
+	0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d,
+	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -174,18 +254,21 @@ func file_dns_service_proto_rawDescGZIP() []byte {
 	return file_dns_service_proto_rawDescData
 }
 
-var file_dns_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_dns_service_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_dns_service_proto_goTypes = []interface{}{
-	(*Message)(nil), // 0: dns_service.Message
-	(*NewName)(nil), // 1: dns_service.NewName
+	(*Message)(nil),    // 0: dns_service.Message
+	(*NewName)(nil),    // 1: dns_service.NewName
+	(*UpdateInfo)(nil), // 2: dns_service.UpdateInfo
 }
 var file_dns_service_proto_depIdxs = []int32{
 	0, // 0: dns_service.DnsService.SayHello:input_type -> dns_service.Message
 	1, // 1: dns_service.DnsService.CreateName:input_type -> dns_service.NewName
-	0, // 2: dns_service.DnsService.SayHello:output_type -> dns_service.Message
-	0, // 3: dns_service.DnsService.CreateName:output_type -> dns_service.Message
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	2, // 2: dns_service.DnsService.Update:input_type -> dns_service.UpdateInfo
+	0, // 3: dns_service.DnsService.SayHello:output_type -> dns_service.Message
+	0, // 4: dns_service.DnsService.CreateName:output_type -> dns_service.Message
+	0, // 5: dns_service.DnsService.Update:output_type -> dns_service.Message
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -221,6 +304,18 @@ func file_dns_service_proto_init() {
 				return nil
 			}
 		}
+		file_dns_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateInfo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -228,7 +323,7 @@ func file_dns_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dns_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -256,6 +351,7 @@ const _ = grpc.SupportPackageIsVersion6
 type DnsServiceClient interface {
 	SayHello(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 	CreateName(ctx context.Context, in *NewName, opts ...grpc.CallOption) (*Message, error)
+	Update(ctx context.Context, in *UpdateInfo, opts ...grpc.CallOption) (*Message, error)
 }
 
 type dnsServiceClient struct {
@@ -284,10 +380,20 @@ func (c *dnsServiceClient) CreateName(ctx context.Context, in *NewName, opts ...
 	return out, nil
 }
 
+func (c *dnsServiceClient) Update(ctx context.Context, in *UpdateInfo, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, "/dns_service.DnsService/Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DnsServiceServer is the server API for DnsService service.
 type DnsServiceServer interface {
 	SayHello(context.Context, *Message) (*Message, error)
 	CreateName(context.Context, *NewName) (*Message, error)
+	Update(context.Context, *UpdateInfo) (*Message, error)
 }
 
 // UnimplementedDnsServiceServer can be embedded to have forward compatible implementations.
@@ -299,6 +405,9 @@ func (*UnimplementedDnsServiceServer) SayHello(context.Context, *Message) (*Mess
 }
 func (*UnimplementedDnsServiceServer) CreateName(context.Context, *NewName) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateName not implemented")
+}
+func (*UnimplementedDnsServiceServer) Update(context.Context, *UpdateInfo) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 
 func RegisterDnsServiceServer(s *grpc.Server, srv DnsServiceServer) {
@@ -341,6 +450,24 @@ func _DnsService_CreateName_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DnsService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DnsServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dns_service.DnsService/Update",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DnsServiceServer).Update(ctx, req.(*UpdateInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _DnsService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "dns_service.DnsService",
 	HandlerType: (*DnsServiceServer)(nil),
@@ -352,6 +479,10 @@ var _DnsService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateName",
 			Handler:    _DnsService_CreateName_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _DnsService_Update_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

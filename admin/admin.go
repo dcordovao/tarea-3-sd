@@ -82,7 +82,7 @@ func main() {
 		/// Create: create <nombre.dominio> <ip>
 		if option == "create" {
 			if len(params) != 3 {
-				fmt.Println("Cuidado!, comando create debería tener 3 parametros...")
+				fmt.Println("Cuidado!, comando create debería tener 2 parametros...")
 				continue
 			}
 
@@ -122,7 +122,27 @@ func main() {
 
 		/// OPCION 2:
 		if option == "update" {
+			if len(params) != 4 {
+				fmt.Println("Cuidado!, comando update debería tener 3 parametros...")
+				continue
+			}
+			ip_dns := ":9001"
+			name := params[1]
+			name_split := strings.Split(name, ".")
+			update_info := dns_service.UpdateInfo{Name: name_split[0], Domain: name_split[1], Opt: params[2], Value: params[3]}
 
+			var conn_dns *grpc.ClientConn
+			conn_dns, err := grpc.Dial(ip_dns, grpc.WithInsecure())
+			if err != nil {
+				log.Fatalf("Could not connect: %s", err)
+			}
+			defer conn_dns.Close()
+			s_dns := dns_service.NewDnsServiceClient(conn_dns)
+			response, err := s_dns.Update(context.Background(), &update_info)
+			if err != nil {
+				log.Fatalf("Error al tratar de crear nombre: %s", err)
+			}
+			log.Printf("Response from Server: %s", response.Body)
 		}
 	}
 }
