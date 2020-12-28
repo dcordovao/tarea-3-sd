@@ -163,3 +163,14 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message,
 
 	return &Message{Body: "Información actualizada con exito!"}, nil
 }
+
+func (s *Server) GetName(ctx context.Context, message *Message) (*Message, error) {
+	//-----------------------------------------------------------//
+	//----------- EN ESTA PARTE SE BUSCA EL DNS -----------------//
+	//----------- CON EL DOMINIO SOLICITADO Y SE RETORNA LA IP --//
+	//----------- Y EL RELOJ VECTORIAL ASOCIADO -----------------//
+	//-----------------------------------------------------------//
+
+	// Por ahora solo se retorna un string para probar. Borrar despues!!
+	return &Message{Body: "Llego al DNS!!"}, nil
+}

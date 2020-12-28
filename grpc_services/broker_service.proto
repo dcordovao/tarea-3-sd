@@ -8,5 +8,6 @@ message Message {
 
 service BrokerService {
   rpc SayHello(Message) returns (Message) {}
+  rpc EnviarDom(Message) returns (Message) {}
 }
 
