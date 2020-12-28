@@ -23,4 +23,5 @@ service DnsService {
   rpc SayHello(Message) returns (Message) {}
   rpc CreateName(NewName) returns (Message) {}
   rpc Update(UpdateInfo) returns (Message) {}
+  rpc getName(Message) returns (Message) {}
 }
