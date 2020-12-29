@@ -18,6 +18,7 @@ message UpdateInfo {
   string domain = 2;
   string opt = 3;
   string value = 4;
+  string rand = 5;
 }
 
 service DnsService {

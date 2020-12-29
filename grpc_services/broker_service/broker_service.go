@@ -4,25 +4,11 @@ import (
 	"log"	
 	"github.com/dcordova/sd_tarea3/grpc_services/dns_service"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"fmt"	
-	"net"
-	"strconv"
+	"google.golang.org/grpc"	
 	"strings"
 	"math/rand"
 )
 
-
-// Validar si una IP es valida
-func checkIPAddress(ip string) bool {
-	if net.ParseIP(ip) == nil {
-		fmt.Printf("IP Address: %s - Invalida\n", ip)
-		return false
-	} else {
-		//fmt.Printf("IP Address: %s - Valida\n", ip)
-		return true
-	}
-}
 
 type Server struct {
 }
@@ -91,28 +77,16 @@ func (s *Server) EnviarVerbo(ctx context.Context, operacion *Message) (*Message,
 	defer conn_dns.Close()
 	
 	/// Create: create <nombre.dominio> <ip>
-	if option == "create" {
-		if len(params) != 3 {			
-			return &Message{Body: "Cuidado!, comando create debería tener 2 parametros..."}, nil
-		}
+	if option == "create" {		
 
 		// Aqui comunicarse con el BROKER y obtener una ip de un dns		
 		name := params[1]
-		name_split := strings.Split(name, ".")
-		if len(name_split) != 2 {			
-			return &Message{Body: "Cuidado! nombre.dominio mal formateado..."}, nil
-		}
+		name_split := strings.Split(name, ".")		
 
-		new_ip := params[2]
-
-		booleano := checkIPAddress(new_ip)
-
-		if !booleano {
-			return &Message{Body: "Fallo en checkIPAddress: "+strconv.FormatBool(booleano)}, nil
-		}		
+		new_ip := params[2]					
 
 		// Enviar al servidor dns el nombre que se quiere crear
-		new_name := dns_service.NewName{Name: name_split[0], Domain: name_split[1], Ip: new_ip, Rand: randomDNS}		
+		new_name := dns_service.NewName{Name: name_split[0], Domain: name_split[1], Ip: new_ip, Rand: randomDNS}	//update google.com googles.com	
 
 		s_dns := dns_service.NewDnsServiceClient(conn_dns)
 
@@ -124,14 +98,11 @@ func (s *Server) EnviarVerbo(ctx context.Context, operacion *Message) (*Message,
 	}
 
 	/// OPCION 2:
-	if option == "update" {
-		if len(params) != 4 {			
-			return &Message{Body: "Cuidado!, comando update debería tener 3 parametros..."}, nil
-		}
+	if option == "update" {		
 				
 		name := params[1]
 		name_split := strings.Split(name, ".")
-		update_info := dns_service.UpdateInfo{Name: name_split[0], Domain: name_split[1], Opt: params[2], Value: params[3]}
+		update_info := dns_service.UpdateInfo{Name: name_split[0], Domain: name_split[1], Opt: params[2], Value: params[3], Rand: randomDNS}
 		
 		s_dns := dns_service.NewDnsServiceClient(conn_dns)
 		response, err := s_dns.Update(context.Background(), &update_info)
