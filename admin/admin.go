@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/dcordova/sd_tarea3/grpc_services/broker_service"
-	//"github.com/dcordova/sd_tarea3/grpc_services/dns_service"
+	"github.com/dcordova/sd_tarea3/grpc_services/dns_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	//"bufio"
@@ -117,9 +117,56 @@ func main() {
 
 		response, err := broker.EnviarVerbo(context.Background(), &message)
 		if err != nil {
-			log.Fatalf("Error when calling SayHello: %s", err)
+			log.Fatalf("Error al enviar verbo: %s", err)
+		}		
+
+		randomDNS := response.Body
+
+		log.Printf("El broker escogió la IP: %s", randomDNS)		
+
+	
+		ip_dns := ":9001" //randomDNS
+		var conn_dns *grpc.ClientConn
+		conn_dns, err = grpc.Dial(ip_dns, grpc.WithInsecure())
+		if err != nil {
+			log.Fatalf("Could not connect: %s", err)
+		}
+		defer conn_dns.Close()
+		
+		/// Create: create <nombre.dominio> <ip>
+		if option == "create" {		
+
+			// Aqui comunicarse con el BROKER y obtener una ip de un dns		
+			name := params[1]
+			name_split := strings.Split(name, ".")		
+
+			new_ip := params[2]					
+
+			// Enviar al servidor dns el nombre que se quiere crear
+			new_name := dns_service.NewName{Name: name_split[0], Domain: name_split[1], Ip: new_ip, Rand: randomDNS}	//update google.com googles.com	
+
+			s_dns := dns_service.NewDnsServiceClient(conn_dns)
+
+			response, err := s_dns.CreateName(context.Background(), &new_name)
+			if err != nil {
+				log.Fatalf("Error al tratar de crear nombre: %s", err)
+			}
+			log.Printf("Response from Server: %s", response.Body)		
 		}
 
-		log.Printf("Response from Server: %s", response.Body)
+		/// OPCION 2:
+		if option == "update" {		
+					
+			name := params[1]
+			name_split := strings.Split(name, ".")
+			update_info := dns_service.UpdateInfo{Name: name_split[0], Domain: name_split[1], Opt: params[2], Value: params[3], Rand: randomDNS}
+			
+			s_dns := dns_service.NewDnsServiceClient(conn_dns)
+			response, err := s_dns.Update(context.Background(), &update_info)
+			if err != nil {
+				log.Fatalf("Error al tratar de crear nombre: %s", err)
+			}
+			log.Printf("Response from Server: %s", response.Body)		
+		}
 	}
 }
