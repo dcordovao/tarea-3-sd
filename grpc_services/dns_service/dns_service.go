@@ -51,7 +51,7 @@ func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, erro
 
 func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, error) {
 
-	file_name := "servidor_dns/zf_files/" + nombre.Domain
+	file_name := "servidor_dns/zf_files"+ nombre.Rand + nombre.Domain
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
 		log.Printf("Creando dominio: " + nombre.Domain)

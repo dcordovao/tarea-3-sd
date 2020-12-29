@@ -4,12 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"net"
+	//"net"
 	"os"
 	"strings"
 
 	"github.com/dcordova/sd_tarea3/grpc_services/broker_service"
-	"github.com/dcordova/sd_tarea3/grpc_services/dns_service"
+	//"github.com/dcordova/sd_tarea3/grpc_services/dns_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	//"bufio"
@@ -17,17 +17,6 @@ import (
 	//"os"
 	//"strconv" // Conversion de strings a int y viceversa
 )
-
-// Validar si una IP es valida
-func checkIPAddress(ip string) bool {
-	if net.ParseIP(ip) == nil {
-		fmt.Printf("IP Address: %s - Invalida\n", ip)
-		return false
-	} else {
-		//fmt.Printf("IP Address: %s - Valida\n", ip)
-		return true
-	}
-}
 
 func verificar_nombre() {
 
@@ -45,14 +34,14 @@ func main() {
 	}
 	defer conn.Close()
 
-	s := broker_service.NewBrokerServiceClient(conn)
+	broker := broker_service.NewBrokerServiceClient(conn)
 
 	// Hello world
 	message := broker_service.Message{
 		Body: "Conectandose desde admin...",
 	}
 
-	response, err := s.SayHello(context.Background(), &message)
+	response, err := broker.SayHello(context.Background(), &message)
 	if err != nil {
 		log.Fatalf("Error when calling SayHello: %s", err)
 	}
@@ -72,77 +61,17 @@ func main() {
 		fmt.Print("-> ")
 		input, _ := reader.ReadString('\n')
 		input = strings.TrimSpace(input)
-		input = strings.ToLower(input)
+		input = strings.ToLower(input)		
 
-		params := strings.Split(input, " ")
-		//fmt.Printf("%v", params)
-
-		option := params[0]
-
-		/// Create: create <nombre.dominio> <ip>
-		if option == "create" {
-			if len(params) != 3 {
-				fmt.Println("Cuidado!, comando create debería tener 2 parametros...")
-				continue
-			}
-
-			// Aqui comunicarse con el BROKER y obtener una ip de un dns
-
-			ip_dns := ":9001"
-			name := params[1]
-			name_split := strings.Split(name, ".")
-			if len(name_split) != 2 {
-				fmt.Println("Cuidado! nombre.dominio mal formateado...")
-				continue
-			}
-
-			new_ip := params[2]
-			if !checkIPAddress(new_ip) {
-				continue
-			}
-
-			// Enviar al servidor dns el nombre que se quiere crear
-			new_name := dns_service.NewName{Name: name_split[0], Domain: name_split[1], Ip: new_ip}
-
-			var conn_dns *grpc.ClientConn
-			conn_dns, err := grpc.Dial(ip_dns, grpc.WithInsecure())
-			if err != nil {
-				log.Fatalf("Could not connect: %s", err)
-			}
-			defer conn_dns.Close()
-
-			s_dns := dns_service.NewDnsServiceClient(conn_dns)
-
-			response, err := s_dns.CreateName(context.Background(), &new_name)
-			if err != nil {
-				log.Fatalf("Error al tratar de crear nombre: %s", err)
-			}
-			log.Printf("Response from Server: %s", response.Body)
+		message := broker_service.Message{
+			Body: input,
 		}
 
-		/// OPCION 2:
-		if option == "update" {
-			if len(params) != 4 {
-				fmt.Println("Cuidado!, comando update debería tener 3 parametros...")
-				continue
-			}
-			ip_dns := ":9001"
-			name := params[1]
-			name_split := strings.Split(name, ".")
-			update_info := dns_service.UpdateInfo{Name: name_split[0], Domain: name_split[1], Opt: params[2], Value: params[3]}
-
-			var conn_dns *grpc.ClientConn
-			conn_dns, err := grpc.Dial(ip_dns, grpc.WithInsecure())
-			if err != nil {
-				log.Fatalf("Could not connect: %s", err)
-			}
-			defer conn_dns.Close()
-			s_dns := dns_service.NewDnsServiceClient(conn_dns)
-			response, err := s_dns.Update(context.Background(), &update_info)
-			if err != nil {
-				log.Fatalf("Error al tratar de crear nombre: %s", err)
-			}
-			log.Printf("Response from Server: %s", response.Body)
+		response, err := broker.EnviarVerbo(context.Background(), &message)
+		if err != nil {
+			log.Fatalf("Error when calling SayHello: %s", err)
 		}
+
+		log.Printf("Response from Server: %s", response.Body)
 	}
 }

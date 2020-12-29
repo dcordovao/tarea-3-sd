@@ -6,7 +6,9 @@ message Message {
   string body = 1;
 }
 
+
 service BrokerService {
+  rpc EnviarVerbo(Message) returns (Message) {}
   rpc SayHello(Message) returns (Message) {}
   rpc EnviarDom(Message) returns (Message) {}
 }
