@@ -3,13 +3,15 @@ package main
 import (
 	"log"
 
+	"bufio"
+
 	"github.com/dcordova/sd_tarea3/grpc_services/broker_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"bufio"
+
 	//"io"
+	"fmt"
 	"os"
-	"fmt"	
 	"strings"
 	//"strconv" // Conversion de strings a int y viceversa
 )
@@ -60,7 +62,7 @@ func main() {
 		input = strings.ToLower(input)
 
 		params := strings.Split(input, " ")
-		
+
 		if len(params) != 2 {
 			fmt.Println("Cuidado!, comando get debería tener 1 parametro...\n")
 			continue

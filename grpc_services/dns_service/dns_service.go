@@ -10,6 +10,12 @@ import (
 	"golang.org/x/net/context"
 )
 
+const zf_folder_path_1 = "servidor_dns/zf_files1"
+const zf_folder_path_2 = "servidor_dns/zf_files2"
+const zf_folder_path_3 = "servidor_dns/zf_files3"
+
+var zf_folder_paths = []string{zf_folder_path_1, zf_folder_path_2, zf_folder_path_3}
+
 type Server struct {
 }
 
@@ -51,10 +57,10 @@ func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, erro
 
 func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, error) {
 
-	file_name := "servidor_dns/zf_files"+ nombre.Rand + nombre.Domain
+	file_name := zf_folder_paths[nombre.IdDns] + "/" + nombre.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
-		log.Printf("Creando dominio: " + nombre.Domain)
+		log.Printf("Creando dominio: " + nombre.Domain + ".zf")
 
 		f, err := os.Create(file_name)
 		if err != nil {
@@ -94,7 +100,7 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, err
 
 // Suponemos que al actualziar nombre, se da solo "nombre", y el dominio siempre se mantiene
 func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message, error) {
-	file_name := "servidor_dns/zf_files/" + update_info.Domain
+	file_name := zf_folder_paths[update_info.IdDns] + "/" + update_info.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
 		return &Message{Body: "ERROR! Ese dominio no existe..."}, nil
@@ -158,7 +164,7 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message,
 		}
 		f.WriteString(txtlines[n_lines-1])
 	} else {
-		return &Message{Body: "ERROR! No se encontre ese nombre en el dominio..."}, nil
+		return &Message{Body: "ERROR! No se encontro ese nombre en el dominio..."}, nil
 	}
 
 	return &Message{Body: "Información actualizada con exito!"}, nil

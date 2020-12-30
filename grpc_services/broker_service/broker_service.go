@@ -1,14 +1,20 @@
 package broker_service
 
 import (
-	"log"	
+	"log"
+
 	"github.com/dcordova/sd_tarea3/grpc_services/dns_service"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"	
+	"google.golang.org/grpc"
+
 	//"strings"
 	"math/rand"
 )
 
+const ip_dns_1 = ":9001" //"10.10.28.121:9000"
+const ip_dns_2 = ":9002" //"10.10.28.122:9000"
+const ip_dns_3 = ":9003" //"10.10.28.123:9000"
+var ips_dns = [...]string{ip_dns_1, ip_dns_2, ip_dns_3}
 
 type Server struct {
 }
@@ -25,11 +31,10 @@ func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, erro
 func (s *Server) EnviarDom(ctx context.Context, message *Message) (*Message, error) {
 	log.Printf("Received from client: %s, now sending to dns sevice", message.Body)
 
-
 	//----------------------------------------------------------//
 	//----------- EN ESTA PARTE SE PIDE AL DNS LA --------------//
 	//----------- IP Y EL RELOJ SEGUN EL DOMINIO SOLICITADO ----//
-	//----------------------------------------------------------//	
+	//----------------------------------------------------------//
 
 	var conn_dns *grpc.ClientConn
 
@@ -56,12 +61,12 @@ func (s *Server) EnviarDom(ctx context.Context, message *Message) (*Message, err
 
 //////   Recibe Verbo     ///////
 //////   Retorna IP       ///////
-func (s *Server) EnviarVerbo(ctx context.Context, operacion *Message) (*Message, error) {
-	
-	IPs := []string{"10.10.28.121", "10.10.28.122", "10.10.28.123"}
-     // Seleccion random de servidor
-    //randomDNS := IPs[rand.Intn(len(IPs))]    
-    randomDNS := []string{"1/", "2/", "3/"}[rand.Intn(len(IPs))]			
-	
-	return &Message{Body: randomDNS}, nil//\n Respuesta: " +response.Body}, nil
+func (s *Server) EnviarVerbo(ctx context.Context, operacion *Message) (*DnsAddress, error) {
+
+	// Seleccion random de servidor
+	//randomDNS := IPs[rand.Intn(len(IPs))]
+	random_int := rand.Intn(len(ips_dns))
+	random_ip := ips_dns[random_int]
+
+	return &DnsAddress{Ip: random_ip, IdDns: int64(random_int)}, nil
 }

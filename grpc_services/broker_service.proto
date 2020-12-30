@@ -6,9 +6,15 @@ message Message {
   string body = 1;
 }
 
+// La IP es por si se necesita saber el numero del dns
+message DnsAddress {
+  string ip = 1;
+  int64 idDns = 2;
+}
+
 
 service BrokerService {
-  rpc EnviarVerbo(Message) returns (Message) {}
+  rpc EnviarVerbo(Message) returns (DnsAddress) {}
   rpc SayHello(Message) returns (Message) {}
   rpc EnviarDom(Message) returns (Message) {}
 }
