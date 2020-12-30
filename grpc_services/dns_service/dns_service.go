@@ -16,7 +16,12 @@ const zf_folder_path_3 = "servidor_dns/zf_files3"
 
 var zf_folder_paths = []string{zf_folder_path_1, zf_folder_path_2, zf_folder_path_3}
 
+type ClockVector struct {
+	x, y, z int
+}
+
 type Server struct {
+	relojes map[string]ClockVector
 }
 
 func check_if_name_in_domain(file_name string, new_name string) bool {
@@ -37,7 +42,7 @@ func check_if_name_in_domain(file_name string, new_name string) bool {
 
 	file.Close()
 
-	for _, eachline := range txtlines[1:] {
+	for _, eachline := range txtlines[:] {
 		//fmt.Println(eachline)
 		lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
 		if lname == new_name {
@@ -68,8 +73,6 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, err
 			os.Exit(1)
 		}
 		defer f.Close()
-		// Al crear el dominio seteamos su reloj en 0 0 0
-		f.WriteString("0 0 0\n")
 		f.WriteString(nombre.Name + "." + nombre.Domain + " IN A " + nombre.Ip)
 
 	} else {
@@ -124,11 +127,11 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message,
 	// Leer linea por linea para buscar un nombre que coincida
 	previusly_created := false
 	var index int
-	for i, eachline := range txtlines[1:] {
+	for i, eachline := range txtlines[:] {
 		//fmt.Println(eachline)
 		lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
 		if lname == update_info.Name {
-			index = i + 1 // Se suma 1 porque se había omitido la primera linea
+			index = i
 			previusly_created = true
 			continue
 		}
@@ -157,7 +160,7 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message,
 			os.Exit(1)
 		}
 		defer f.Close()
-		// Al crear el dominio seteamos su reloj en 0 0 0
+
 		n_lines := len(txtlines)
 		for _, eachline := range txtlines[:n_lines-1] {
 			f.WriteString(eachline + "\n")
