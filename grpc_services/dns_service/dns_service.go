@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 
 	"golang.org/x/net/context"
@@ -22,26 +21,7 @@ type ClockVector struct {
 }
 
 type Server struct {
-	relojes map[string]ClockVector
-}
-
-// Esta funcion suma 1 en la posicion del vector correspondiente al server indicado por index
-func sumar_uno_a_reloj(c ClockVector, index int) ClockVector {
-	if index == 0 {
-		return ClockVector{x: c.x + 1, y: c.y, z: c.z}
-	} else if index == 1 {
-		return ClockVector{x: c.x, y: c.y + 1, z: c.z}
-	} else if index == 2 {
-		return ClockVector{x: c.x, y: c.y, z: c.z + 1}
-	} else {
-		log.Fatal("ERROR, indice de reloj erroneo")
-		return ClockVector{}
-	}
-}
-
-// Funcion auxiliar para printear y debbuguear
-func reloj_a_string(c ClockVector) string {
-	return strconv.Itoa(c.x) + " " + strconv.Itoa(c.y) + " " + strconv.Itoa(c.z)
+	Relojes map[string]ClockVector
 }
 
 func check_if_name_in_domain(file_name string, new_name string) bool {
@@ -86,8 +66,7 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, err
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
 		log.Printf("Creando dominio: " + nombre.Domain + ".zf")
-		// Se crea en 0 el reloj vector de este dominio
-		s.relojes[nombre.Domain] = ClockVector{0, 0, 0}
+
 		f, err := os.Create(file_name)
 		if err != nil {
 			fmt.Println(err)
@@ -95,8 +74,6 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, err
 		}
 		defer f.Close()
 		f.WriteString(nombre.Name + "." + nombre.Domain + " IN A " + nombre.Ip)
-		// Actualizar reloj
-		s.relojes[nombre.Domain] = sumar_uno_a_reloj(s.relojes[nombre.Domain], int(nombre.IdDns))
 
 	} else {
 		// Leer el archivo, leer linea por linea, y si el nombre no existe es creado.}
@@ -111,16 +88,14 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, err
 			}
 
 			defer f.Close()
+
 			if _, err = f.WriteString("\n" + nombre.Name + "." + nombre.Domain + " IN A " + nombre.Ip); err != nil {
 				panic(err)
 			}
-			s.relojes[nombre.Domain] = sumar_uno_a_reloj(s.relojes[nombre.Domain], int(nombre.IdDns))
 		} else {
 			return &Message{Body: "Nombre no creado. El nombre ya estaba registrado en el dominio..."}, nil
 		}
 	}
-
-	fmt.Printf("reloj dominio " + nombre.Domain + ": " + reloj_a_string(s.relojes[nombre.Domain]))
 
 	return &Message{Body: "Nombre creado con exito"}, nil
 

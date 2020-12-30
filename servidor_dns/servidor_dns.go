@@ -31,8 +31,11 @@ func main() {
 
 	fmt.Println("Escuchando en el puerto " + puerto + "...")
 
+	
+	clock := make(map[string]dns_service.ClockVector)
+
 	// Setear server
-	s := dns_service.Server{relojes: make(map[string]dns_service.ClockVector)}
+	s := dns_service.Server{Relojes: clock}
 
 	grpcServer := grpc.NewServer()
 	dns_service.RegisterDnsServiceServer(grpcServer, &s)
