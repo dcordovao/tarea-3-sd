@@ -32,7 +32,7 @@ func main() {
 	fmt.Println("Escuchando en el puerto " + puerto + "...")
 
 	// Setear server
-	s := dns_service.Server{}
+	s := dns_service.Server{relojes: make(map[string]dns_service.ClockVector)}
 
 	grpcServer := grpc.NewServer()
 	dns_service.RegisterDnsServiceServer(grpcServer, &s)
@@ -42,4 +42,5 @@ func main() {
 		log.Fatalf("Failed to serve gRPC server on port %s: %v", puerto, err)
 	}
 	fmt.Println("Server corriendo...")
+
 }
