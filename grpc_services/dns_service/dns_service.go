@@ -122,7 +122,7 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandRespo
 		}
 	}
 	ultimo_reloj := s.Relojes[nombre.Domain]
-	fmt.Printf("reloj dominio " + nombre.Domain + ": " + reloj_a_string(ultimo_reloj))
+	fmt.Println("Se creo con exito! Reloj dominio " + nombre.Domain + ": " + reloj_a_string(ultimo_reloj))
 	reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
 	response := &CommandResponse{Body: "Nombre creado con exito", Clock: reloj_mensaje}
 	return response, nil
@@ -130,12 +130,12 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandRespo
 }
 
 // Suponemos que al actualziar nombre, se da solo "nombre", y el dominio siempre se mantiene
-func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message, error) {
+func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*CommandResponse, error) {
 	file_name := zf_folder_paths[update_info.IdDns] + "/" + update_info.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
-		log.Printf("Se trato de hacer update a un dominio no existente...")
-		return &Message{Body: "ERROR! Ese dominio no existe..."}, nil
+		log.Println("Se trato de hacer update a un dominio no existente...")
+		return &CommandResponse{Body: "ERROR! Ese dominio no existe...", Clock: nil}, nil
 	}
 	// Si ya existe el archivo, lo leemos en busca del nombre que queremos modificar
 	file, err := os.Open(file_name)
@@ -195,11 +195,93 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message,
 			f.WriteString(eachline + "\n")
 		}
 		f.WriteString(txtlines[n_lines-1])
+
+		// Actualizar reloj
+		s.Relojes[update_info.Domain] = sumar_uno_a_reloj(s.Relojes[update_info.Domain], int(update_info.IdDns))
+
+		// Enviar reloj como respuesta
+		ultimo_reloj := s.Relojes[update_info.Domain]
+		fmt.Println("Se creo con exito! Reloj dominio " + update_info.Domain + ": " + reloj_a_string(ultimo_reloj))
+		reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
+		return &CommandResponse{Body: "Información actualizada con exito!", Clock: reloj_mensaje}, nil
 	} else {
-		return &Message{Body: "ERROR! No se encontro ese nombre en el dominio..."}, nil
+		return &CommandResponse{Body: "ERROR! No se encontro ese nombre en el dominio...", Clock: nil}, nil
 	}
 
-	return &Message{Body: "Información actualizada con exito!"}, nil
+}
+
+// Suponemos que al actualziar nombre, se da solo "nombre", y el dominio siempre se mantiene
+func (s *Server) Delete(ctx context.Context, delete_info *DeleteInfo) (*CommandResponse, error) {
+	file_name := zf_folder_paths[delete_info.IdDns] + "/" + delete_info.Domain + ".zf"
+	// Chequear si el dominio existe. Esto es true si no existe
+	if _, err := os.Stat(file_name); os.IsNotExist(err) {
+		log.Println("Se trato de hacer delete a un dominio no existente...")
+		fmt.Printf(file_name + "\n")
+		return &CommandResponse{Body: "ERROR! Ese dominio no existe...", Clock: nil}, nil
+	}
+	// Si ya existe el archivo, lo leemos en busca del nombre que queremos modificar
+	file, err := os.Open(file_name)
+	if err != nil {
+		log.Fatalf("failed opening file: %s", err)
+	}
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var txtlines []string
+
+	for scanner.Scan() {
+		txtlines = append(txtlines, scanner.Text())
+	}
+
+	file.Close()
+
+	// Leer linea por linea para buscar un nombre que coincida
+	previusly_created := false
+	var index int
+	for i, eachline := range txtlines[:] {
+		//fmt.Println(eachline)
+		lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
+		if lname == delete_info.Name {
+			index = i
+			previusly_created = true
+			continue
+		}
+	}
+
+	if previusly_created {
+		// Si se encontro la linea la eliminamos
+		txtlines = append(txtlines[:index], txtlines[index+1:]...)
+
+		// Eliminamos el archivo y lo creamos de nuevo sin la linea eliminada
+		e := os.Remove(file_name)
+		if e != nil {
+			log.Fatal(e)
+		}
+
+		f, err := os.Create(file_name)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		defer f.Close()
+
+		n_lines := len(txtlines)
+		for _, eachline := range txtlines[:n_lines-1] {
+			f.WriteString(eachline + "\n")
+		}
+		f.WriteString(txtlines[n_lines-1])
+
+		// Actualizar reloj
+		s.Relojes[delete_info.Domain] = sumar_uno_a_reloj(s.Relojes[delete_info.Domain], int(delete_info.IdDns))
+
+		// Enviar reloj como respuesta
+		ultimo_reloj := s.Relojes[delete_info.Domain]
+		fmt.Println("Se creo con exito! Reloj dominio " + delete_info.Domain + ": " + reloj_a_string(ultimo_reloj))
+		reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
+		return &CommandResponse{Body: "Información eliminada con exito!", Clock: reloj_mensaje}, nil
+	} else {
+		return &CommandResponse{Body: "ERROR! No se encontro ese nombre en el dominio...", Clock: nil}, nil
+	}
 }
 
 // Esta funcion solo retorna el vector reloj del nombre.dominio solicitado

@@ -132,6 +132,14 @@ func main() {
 			}
 		}
 
+		/// validar opcion 3
+		if option == "delete" {
+			if len(params) != 2 {
+				log.Printf("Cuidado!, comando delete debería tener 2 parametros...")
+				continue
+			}
+		}
+
 		response, err := broker.EnviarVerbo(context.Background(), &message)
 		if err != nil {
 			log.Fatalf("Error al enviar verbo: %s", err)
@@ -139,7 +147,7 @@ func main() {
 		id_dns := int(response.IdDns)
 		ip_connection := response.Ip
 
-		log.Printf("El broker escogió el DNS %v la IP: %s", id_dns, response.Ip)
+		log.Printf("El broker escogió el DNS %v la IP: %s", id_dns+1, response.Ip)
 
 		//ip_dns := ":9001" //randomDNS
 		var conn_dns *grpc.ClientConn
@@ -177,7 +185,8 @@ func main() {
 				defer conn_dns.Close()
 				s_dns = dns_service.NewDnsServiceClient(conn_dns)
 				id_dns = latest_clock.idDns
-				fmt.Println("Se cambio la conexion a la ultima ip vista: " + ip_connection)
+				fmt.Println("Esta version es anterior a la ultima modificada!")
+				fmt.Println("Se cambio la conexion a la ultima ip vista para este dominio: " + ip_connection)
 			}
 		}
 
@@ -211,6 +220,18 @@ func main() {
 			response, err := s_dns.Update(context.Background(), &update_info)
 			if err != nil {
 				log.Fatalf("Error al tratar de crear nombre: %s", err)
+			}
+			log.Printf("Response from Server: %s", response.Body)
+		}
+
+		/// OPCION 3:
+		if option == "delete" {
+
+			delete_info := dns_service.DeleteInfo{Name: name_split[0], Domain: name_split[1], IdDns: int64(id_dns)}
+
+			response, err := s_dns.Delete(context.Background(), &delete_info)
+			if err != nil {
+				log.Fatalf("Error al tratar eliminar nombre: %s", err)
 			}
 			log.Printf("Response from Server: %s", response.Body)
 		}

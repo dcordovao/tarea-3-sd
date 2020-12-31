@@ -226,6 +226,69 @@ func (x *UpdateInfo) GetIdDns() int64 {
 	return 0
 }
 
+type DeleteInfo struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name   string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Domain string `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	IdDns  int64  `protobuf:"varint,3,opt,name=idDns,proto3" json:"idDns,omitempty"`
+}
+
+func (x *DeleteInfo) Reset() {
+	*x = DeleteInfo{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dns_service_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteInfo) ProtoMessage() {}
+
+func (x *DeleteInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_dns_service_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteInfo.ProtoReflect.Descriptor instead.
+func (*DeleteInfo) Descriptor() ([]byte, []int) {
+	return file_dns_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *DeleteInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *DeleteInfo) GetDomain() string {
+	if x != nil {
+		return x.Domain
+	}
+	return ""
+}
+
+func (x *DeleteInfo) GetIdDns() int64 {
+	if x != nil {
+		return x.IdDns
+	}
+	return 0
+}
+
 type ClockMessage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -239,7 +302,7 @@ type ClockMessage struct {
 func (x *ClockMessage) Reset() {
 	*x = ClockMessage{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dns_service_proto_msgTypes[3]
+		mi := &file_dns_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -252,7 +315,7 @@ func (x *ClockMessage) String() string {
 func (*ClockMessage) ProtoMessage() {}
 
 func (x *ClockMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_dns_service_proto_msgTypes[3]
+	mi := &file_dns_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -265,7 +328,7 @@ func (x *ClockMessage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClockMessage.ProtoReflect.Descriptor instead.
 func (*ClockMessage) Descriptor() ([]byte, []int) {
-	return file_dns_service_proto_rawDescGZIP(), []int{3}
+	return file_dns_service_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ClockMessage) GetX() int64 {
@@ -301,7 +364,7 @@ type CommandResponse struct {
 func (x *CommandResponse) Reset() {
 	*x = CommandResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dns_service_proto_msgTypes[4]
+		mi := &file_dns_service_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -314,7 +377,7 @@ func (x *CommandResponse) String() string {
 func (*CommandResponse) ProtoMessage() {}
 
 func (x *CommandResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_dns_service_proto_msgTypes[4]
+	mi := &file_dns_service_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -327,7 +390,7 @@ func (x *CommandResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandResponse.ProtoReflect.Descriptor instead.
 func (*CommandResponse) Descriptor() ([]byte, []int) {
-	return file_dns_service_proto_rawDescGZIP(), []int{4}
+	return file_dns_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CommandResponse) GetBody() string {
@@ -364,6 +427,11 @@ var file_dns_service_proto_rawDesc = []byte{
 	0x01, 0x28, 0x09, 0x52, 0x03, 0x6f, 0x70, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75,
 	0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x12, 0x14,
 	0x0a, 0x05, 0x69, 0x64, 0x44, 0x6e, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x69,
+	0x64, 0x44, 0x6e, 0x73, 0x22, 0x4e, 0x0a, 0x0a, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6e,
+	0x66, 0x6f, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x12, 0x14,
+	0x0a, 0x05, 0x69, 0x64, 0x44, 0x6e, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x69,
 	0x64, 0x44, 0x6e, 0x73, 0x22, 0x38, 0x0a, 0x0c, 0x43, 0x6c, 0x6f, 0x63, 0x6b, 0x4d, 0x65, 0x73,
 	0x73, 0x61, 0x67, 0x65, 0x12, 0x0c, 0x0a, 0x01, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
 	0x01, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x01, 0x79,
@@ -373,7 +441,7 @@ var file_dns_service_proto_rawDesc = []byte{
 	0x04, 0x62, 0x6f, 0x64, 0x79, 0x12, 0x2f, 0x0a, 0x05, 0x63, 0x6c, 0x6f, 0x63, 0x6b, 0x18, 0x02,
 	0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69,
 	0x63, 0x65, 0x2e, 0x43, 0x6c, 0x6f, 0x63, 0x6b, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52,
-	0x05, 0x63, 0x6c, 0x6f, 0x63, 0x6b, 0x32, 0xbd, 0x02, 0x0a, 0x0a, 0x44, 0x6e, 0x73, 0x53, 0x65,
+	0x05, 0x63, 0x6c, 0x6f, 0x63, 0x6b, 0x32, 0x88, 0x03, 0x0a, 0x0a, 0x44, 0x6e, 0x73, 0x53, 0x65,
 	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c,
 	0x6f, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
 	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65,
@@ -382,18 +450,23 @@ var file_dns_service_proto_rawDesc = []byte{
 	0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4e, 0x65, 0x77, 0x4e,
 	0x61, 0x6d, 0x65, 0x1a, 0x1c, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
 	0x65, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x00, 0x12, 0x39, 0x0a, 0x06, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x17, 0x2e,
+	0x65, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x06, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x17, 0x2e,
 	0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x37,
-	0x0a, 0x07, 0x47, 0x65, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f,
-	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a,
-	0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65,
-	0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x3d, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x43, 0x6c,
-	0x6f, 0x63, 0x6b, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x19, 0x2e, 0x64, 0x6e, 0x73, 0x5f,
-	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x6c, 0x6f, 0x63, 0x6b, 0x4d, 0x65, 0x73,
-	0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x1a, 0x1c, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x06, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x12, 0x17, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x1a, 0x1c, 0x2e, 0x64, 0x6e, 0x73, 0x5f,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x37, 0x0a, 0x07, 0x47, 0x65, 0x74,
+	0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73,
+	0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x22, 0x00, 0x12, 0x3d, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x43, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x14,
+	0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x1a, 0x19, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x2e, 0x43, 0x6c, 0x6f, 0x63, 0x6b, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22,
+	0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -408,28 +481,31 @@ func file_dns_service_proto_rawDescGZIP() []byte {
 	return file_dns_service_proto_rawDescData
 }
 
-var file_dns_service_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_dns_service_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_dns_service_proto_goTypes = []interface{}{
 	(*Message)(nil),         // 0: dns_service.Message
 	(*NewName)(nil),         // 1: dns_service.NewName
 	(*UpdateInfo)(nil),      // 2: dns_service.UpdateInfo
-	(*ClockMessage)(nil),    // 3: dns_service.ClockMessage
-	(*CommandResponse)(nil), // 4: dns_service.CommandResponse
+	(*DeleteInfo)(nil),      // 3: dns_service.DeleteInfo
+	(*ClockMessage)(nil),    // 4: dns_service.ClockMessage
+	(*CommandResponse)(nil), // 5: dns_service.CommandResponse
 }
 var file_dns_service_proto_depIdxs = []int32{
-	3, // 0: dns_service.CommandResponse.clock:type_name -> dns_service.ClockMessage
+	4, // 0: dns_service.CommandResponse.clock:type_name -> dns_service.ClockMessage
 	0, // 1: dns_service.DnsService.SayHello:input_type -> dns_service.Message
 	1, // 2: dns_service.DnsService.CreateName:input_type -> dns_service.NewName
 	2, // 3: dns_service.DnsService.Update:input_type -> dns_service.UpdateInfo
-	0, // 4: dns_service.DnsService.GetName:input_type -> dns_service.Message
-	0, // 5: dns_service.DnsService.GetClock:input_type -> dns_service.Message
-	0, // 6: dns_service.DnsService.SayHello:output_type -> dns_service.Message
-	4, // 7: dns_service.DnsService.CreateName:output_type -> dns_service.CommandResponse
-	0, // 8: dns_service.DnsService.Update:output_type -> dns_service.Message
-	0, // 9: dns_service.DnsService.GetName:output_type -> dns_service.Message
-	3, // 10: dns_service.DnsService.GetClock:output_type -> dns_service.ClockMessage
-	6, // [6:11] is the sub-list for method output_type
-	1, // [1:6] is the sub-list for method input_type
+	3, // 4: dns_service.DnsService.Delete:input_type -> dns_service.DeleteInfo
+	0, // 5: dns_service.DnsService.GetName:input_type -> dns_service.Message
+	0, // 6: dns_service.DnsService.GetClock:input_type -> dns_service.Message
+	0, // 7: dns_service.DnsService.SayHello:output_type -> dns_service.Message
+	5, // 8: dns_service.DnsService.CreateName:output_type -> dns_service.CommandResponse
+	5, // 9: dns_service.DnsService.Update:output_type -> dns_service.CommandResponse
+	5, // 10: dns_service.DnsService.Delete:output_type -> dns_service.CommandResponse
+	0, // 11: dns_service.DnsService.GetName:output_type -> dns_service.Message
+	4, // 12: dns_service.DnsService.GetClock:output_type -> dns_service.ClockMessage
+	7, // [7:13] is the sub-list for method output_type
+	1, // [1:7] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -478,7 +554,7 @@ func file_dns_service_proto_init() {
 			}
 		}
 		file_dns_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ClockMessage); i {
+			switch v := v.(*DeleteInfo); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -490,6 +566,18 @@ func file_dns_service_proto_init() {
 			}
 		}
 		file_dns_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ClockMessage); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dns_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CommandResponse); i {
 			case 0:
 				return &v.state
@@ -508,7 +596,7 @@ func file_dns_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dns_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -536,7 +624,8 @@ const _ = grpc.SupportPackageIsVersion6
 type DnsServiceClient interface {
 	SayHello(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 	CreateName(ctx context.Context, in *NewName, opts ...grpc.CallOption) (*CommandResponse, error)
-	Update(ctx context.Context, in *UpdateInfo, opts ...grpc.CallOption) (*Message, error)
+	Update(ctx context.Context, in *UpdateInfo, opts ...grpc.CallOption) (*CommandResponse, error)
+	Delete(ctx context.Context, in *DeleteInfo, opts ...grpc.CallOption) (*CommandResponse, error)
 	GetName(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 	GetClock(ctx context.Context, in *Message, opts ...grpc.CallOption) (*ClockMessage, error)
 }
@@ -567,9 +656,18 @@ func (c *dnsServiceClient) CreateName(ctx context.Context, in *NewName, opts ...
 	return out, nil
 }
 
-func (c *dnsServiceClient) Update(ctx context.Context, in *UpdateInfo, opts ...grpc.CallOption) (*Message, error) {
-	out := new(Message)
+func (c *dnsServiceClient) Update(ctx context.Context, in *UpdateInfo, opts ...grpc.CallOption) (*CommandResponse, error) {
+	out := new(CommandResponse)
 	err := c.cc.Invoke(ctx, "/dns_service.DnsService/Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *dnsServiceClient) Delete(ctx context.Context, in *DeleteInfo, opts ...grpc.CallOption) (*CommandResponse, error) {
+	out := new(CommandResponse)
+	err := c.cc.Invoke(ctx, "/dns_service.DnsService/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -598,7 +696,8 @@ func (c *dnsServiceClient) GetClock(ctx context.Context, in *Message, opts ...gr
 type DnsServiceServer interface {
 	SayHello(context.Context, *Message) (*Message, error)
 	CreateName(context.Context, *NewName) (*CommandResponse, error)
-	Update(context.Context, *UpdateInfo) (*Message, error)
+	Update(context.Context, *UpdateInfo) (*CommandResponse, error)
+	Delete(context.Context, *DeleteInfo) (*CommandResponse, error)
 	GetName(context.Context, *Message) (*Message, error)
 	GetClock(context.Context, *Message) (*ClockMessage, error)
 }
@@ -613,8 +712,11 @@ func (*UnimplementedDnsServiceServer) SayHello(context.Context, *Message) (*Mess
 func (*UnimplementedDnsServiceServer) CreateName(context.Context, *NewName) (*CommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateName not implemented")
 }
-func (*UnimplementedDnsServiceServer) Update(context.Context, *UpdateInfo) (*Message, error) {
+func (*UnimplementedDnsServiceServer) Update(context.Context, *UpdateInfo) (*CommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (*UnimplementedDnsServiceServer) Delete(context.Context, *DeleteInfo) (*CommandResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (*UnimplementedDnsServiceServer) GetName(context.Context, *Message) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetName not implemented")
@@ -681,6 +783,24 @@ func _DnsService_Update_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DnsService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DnsServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dns_service.DnsService/Delete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DnsServiceServer).Delete(ctx, req.(*DeleteInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DnsService_GetName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Message)
 	if err := dec(in); err != nil {
@@ -732,6 +852,10 @@ var _DnsService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _DnsService_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _DnsService_Delete_Handler,
 		},
 		{
 			MethodName: "GetName",
