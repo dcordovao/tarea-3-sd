@@ -21,9 +21,21 @@ message UpdateInfo {
   int64 idDns = 5;
 }
 
+message ClockMessage {
+  int64 x = 1;
+  int64 y = 2;
+  int64 z = 3;
+}
+
+message CommandResponse {
+  string body = 1;
+  ClockMessage clock = 2;
+}
+
 service DnsService {
   rpc SayHello(Message) returns (Message) {}
-  rpc CreateName(NewName) returns (Message) {}
+  rpc CreateName(NewName) returns (CommandResponse) {}
   rpc Update(UpdateInfo) returns (Message) {}
   rpc GetName(Message) returns (Message) {}
+  rpc GetClock(Message) returns (ClockMessage) {}
 }

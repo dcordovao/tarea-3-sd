@@ -226,6 +226,124 @@ func (x *UpdateInfo) GetIdDns() int64 {
 	return 0
 }
 
+type ClockMessage struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	X int64 `protobuf:"varint,1,opt,name=x,proto3" json:"x,omitempty"`
+	Y int64 `protobuf:"varint,2,opt,name=y,proto3" json:"y,omitempty"`
+	Z int64 `protobuf:"varint,3,opt,name=z,proto3" json:"z,omitempty"`
+}
+
+func (x *ClockMessage) Reset() {
+	*x = ClockMessage{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dns_service_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ClockMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClockMessage) ProtoMessage() {}
+
+func (x *ClockMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_dns_service_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClockMessage.ProtoReflect.Descriptor instead.
+func (*ClockMessage) Descriptor() ([]byte, []int) {
+	return file_dns_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ClockMessage) GetX() int64 {
+	if x != nil {
+		return x.X
+	}
+	return 0
+}
+
+func (x *ClockMessage) GetY() int64 {
+	if x != nil {
+		return x.Y
+	}
+	return 0
+}
+
+func (x *ClockMessage) GetZ() int64 {
+	if x != nil {
+		return x.Z
+	}
+	return 0
+}
+
+type CommandResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Body  string        `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
+	Clock *ClockMessage `protobuf:"bytes,2,opt,name=clock,proto3" json:"clock,omitempty"`
+}
+
+func (x *CommandResponse) Reset() {
+	*x = CommandResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dns_service_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CommandResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommandResponse) ProtoMessage() {}
+
+func (x *CommandResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_dns_service_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommandResponse.ProtoReflect.Descriptor instead.
+func (*CommandResponse) Descriptor() ([]byte, []int) {
+	return file_dns_service_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CommandResponse) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *CommandResponse) GetClock() *ClockMessage {
+	if x != nil {
+		return x.Clock
+	}
+	return nil
+}
+
 var File_dns_service_proto protoreflect.FileDescriptor
 
 var file_dns_service_proto_rawDesc = []byte{
@@ -246,23 +364,36 @@ var file_dns_service_proto_rawDesc = []byte{
 	0x01, 0x28, 0x09, 0x52, 0x03, 0x6f, 0x70, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75,
 	0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x12, 0x14,
 	0x0a, 0x05, 0x69, 0x64, 0x44, 0x6e, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x69,
-	0x64, 0x44, 0x6e, 0x73, 0x32, 0xf6, 0x01, 0x0a, 0x0a, 0x44, 0x6e, 0x73, 0x53, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x12,
+	0x64, 0x44, 0x6e, 0x73, 0x22, 0x38, 0x0a, 0x0c, 0x43, 0x6c, 0x6f, 0x63, 0x6b, 0x4d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x12, 0x0c, 0x0a, 0x01, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x01, 0x78, 0x12, 0x0c, 0x0a, 0x01, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x01, 0x79,
+	0x12, 0x0c, 0x0a, 0x01, 0x7a, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x01, 0x7a, 0x22, 0x56,
+	0x0a, 0x0f, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x12, 0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x62, 0x6f, 0x64, 0x79, 0x12, 0x2f, 0x0a, 0x05, 0x63, 0x6c, 0x6f, 0x63, 0x6b, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x2e, 0x43, 0x6c, 0x6f, 0x63, 0x6b, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52,
+	0x05, 0x63, 0x6c, 0x6f, 0x63, 0x6b, 0x32, 0xbd, 0x02, 0x0a, 0x0a, 0x44, 0x6e, 0x73, 0x53, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x38, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c,
+	0x6f, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
+	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12,
+	0x42, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x2e,
+	0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4e, 0x65, 0x77, 0x4e,
+	0x61, 0x6d, 0x65, 0x1a, 0x1c, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x12, 0x39, 0x0a, 0x06, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x17, 0x2e,
+	0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x37,
+	0x0a, 0x07, 0x47, 0x65, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a,
 	0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65,
-	0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x3a, 0x0a,
-	0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x2e, 0x64, 0x6e,
-	0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4e, 0x65, 0x77, 0x4e, 0x61, 0x6d,
-	0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
-	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x39, 0x0a, 0x06, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x12, 0x17, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x1a, 0x14, 0x2e, 0x64,
-	0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61,
-	0x67, 0x65, 0x22, 0x00, 0x12, 0x37, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x12,
-	0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65,
-	0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x3d, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x43, 0x6c,
+	0x6f, 0x63, 0x6b, 0x12, 0x14, 0x2e, 0x64, 0x6e, 0x73, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x19, 0x2e, 0x64, 0x6e, 0x73, 0x5f,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x43, 0x6c, 0x6f, 0x63, 0x6b, 0x4d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -277,26 +408,31 @@ func file_dns_service_proto_rawDescGZIP() []byte {
 	return file_dns_service_proto_rawDescData
 }
 
-var file_dns_service_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_dns_service_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_dns_service_proto_goTypes = []interface{}{
-	(*Message)(nil),    // 0: dns_service.Message
-	(*NewName)(nil),    // 1: dns_service.NewName
-	(*UpdateInfo)(nil), // 2: dns_service.UpdateInfo
+	(*Message)(nil),         // 0: dns_service.Message
+	(*NewName)(nil),         // 1: dns_service.NewName
+	(*UpdateInfo)(nil),      // 2: dns_service.UpdateInfo
+	(*ClockMessage)(nil),    // 3: dns_service.ClockMessage
+	(*CommandResponse)(nil), // 4: dns_service.CommandResponse
 }
 var file_dns_service_proto_depIdxs = []int32{
-	0, // 0: dns_service.DnsService.SayHello:input_type -> dns_service.Message
-	1, // 1: dns_service.DnsService.CreateName:input_type -> dns_service.NewName
-	2, // 2: dns_service.DnsService.Update:input_type -> dns_service.UpdateInfo
-	0, // 3: dns_service.DnsService.GetName:input_type -> dns_service.Message
-	0, // 4: dns_service.DnsService.SayHello:output_type -> dns_service.Message
-	0, // 5: dns_service.DnsService.CreateName:output_type -> dns_service.Message
-	0, // 6: dns_service.DnsService.Update:output_type -> dns_service.Message
-	0, // 7: dns_service.DnsService.GetName:output_type -> dns_service.Message
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: dns_service.CommandResponse.clock:type_name -> dns_service.ClockMessage
+	0, // 1: dns_service.DnsService.SayHello:input_type -> dns_service.Message
+	1, // 2: dns_service.DnsService.CreateName:input_type -> dns_service.NewName
+	2, // 3: dns_service.DnsService.Update:input_type -> dns_service.UpdateInfo
+	0, // 4: dns_service.DnsService.GetName:input_type -> dns_service.Message
+	0, // 5: dns_service.DnsService.GetClock:input_type -> dns_service.Message
+	0, // 6: dns_service.DnsService.SayHello:output_type -> dns_service.Message
+	4, // 7: dns_service.DnsService.CreateName:output_type -> dns_service.CommandResponse
+	0, // 8: dns_service.DnsService.Update:output_type -> dns_service.Message
+	0, // 9: dns_service.DnsService.GetName:output_type -> dns_service.Message
+	3, // 10: dns_service.DnsService.GetClock:output_type -> dns_service.ClockMessage
+	6, // [6:11] is the sub-list for method output_type
+	1, // [1:6] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_dns_service_proto_init() }
@@ -341,6 +477,30 @@ func file_dns_service_proto_init() {
 				return nil
 			}
 		}
+		file_dns_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ClockMessage); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dns_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CommandResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -348,7 +508,7 @@ func file_dns_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dns_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -375,9 +535,10 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DnsServiceClient interface {
 	SayHello(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
-	CreateName(ctx context.Context, in *NewName, opts ...grpc.CallOption) (*Message, error)
+	CreateName(ctx context.Context, in *NewName, opts ...grpc.CallOption) (*CommandResponse, error)
 	Update(ctx context.Context, in *UpdateInfo, opts ...grpc.CallOption) (*Message, error)
 	GetName(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
+	GetClock(ctx context.Context, in *Message, opts ...grpc.CallOption) (*ClockMessage, error)
 }
 
 type dnsServiceClient struct {
@@ -397,8 +558,8 @@ func (c *dnsServiceClient) SayHello(ctx context.Context, in *Message, opts ...gr
 	return out, nil
 }
 
-func (c *dnsServiceClient) CreateName(ctx context.Context, in *NewName, opts ...grpc.CallOption) (*Message, error) {
-	out := new(Message)
+func (c *dnsServiceClient) CreateName(ctx context.Context, in *NewName, opts ...grpc.CallOption) (*CommandResponse, error) {
+	out := new(CommandResponse)
 	err := c.cc.Invoke(ctx, "/dns_service.DnsService/CreateName", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -424,12 +585,22 @@ func (c *dnsServiceClient) GetName(ctx context.Context, in *Message, opts ...grp
 	return out, nil
 }
 
+func (c *dnsServiceClient) GetClock(ctx context.Context, in *Message, opts ...grpc.CallOption) (*ClockMessage, error) {
+	out := new(ClockMessage)
+	err := c.cc.Invoke(ctx, "/dns_service.DnsService/GetClock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DnsServiceServer is the server API for DnsService service.
 type DnsServiceServer interface {
 	SayHello(context.Context, *Message) (*Message, error)
-	CreateName(context.Context, *NewName) (*Message, error)
+	CreateName(context.Context, *NewName) (*CommandResponse, error)
 	Update(context.Context, *UpdateInfo) (*Message, error)
 	GetName(context.Context, *Message) (*Message, error)
+	GetClock(context.Context, *Message) (*ClockMessage, error)
 }
 
 // UnimplementedDnsServiceServer can be embedded to have forward compatible implementations.
@@ -439,7 +610,7 @@ type UnimplementedDnsServiceServer struct {
 func (*UnimplementedDnsServiceServer) SayHello(context.Context, *Message) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
 }
-func (*UnimplementedDnsServiceServer) CreateName(context.Context, *NewName) (*Message, error) {
+func (*UnimplementedDnsServiceServer) CreateName(context.Context, *NewName) (*CommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateName not implemented")
 }
 func (*UnimplementedDnsServiceServer) Update(context.Context, *UpdateInfo) (*Message, error) {
@@ -447,6 +618,9 @@ func (*UnimplementedDnsServiceServer) Update(context.Context, *UpdateInfo) (*Mes
 }
 func (*UnimplementedDnsServiceServer) GetName(context.Context, *Message) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetName not implemented")
+}
+func (*UnimplementedDnsServiceServer) GetClock(context.Context, *Message) (*ClockMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetClock not implemented")
 }
 
 func RegisterDnsServiceServer(s *grpc.Server, srv DnsServiceServer) {
@@ -525,6 +699,24 @@ func _DnsService_GetName_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DnsService_GetClock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DnsServiceServer).GetClock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dns_service.DnsService/GetClock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DnsServiceServer).GetClock(ctx, req.(*Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _DnsService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "dns_service.DnsService",
 	HandlerType: (*DnsServiceServer)(nil),
@@ -544,6 +736,10 @@ var _DnsService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetName",
 			Handler:    _DnsService_GetName_Handler,
+		},
+		{
+			MethodName: "GetClock",
+			Handler:    _DnsService_GetClock_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

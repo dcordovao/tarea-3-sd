@@ -5,7 +5,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"strconv"
 
 	"github.com/dcordova/sd_tarea3/grpc_services/dns_service"
 	"google.golang.org/grpc"
@@ -15,7 +14,7 @@ func main() {
 
 	// Se le puede dar un parametro al server que indica su indice
 	// Esto no se usara en la version final, ya que todos los servers seran equivalentes
-	fmt.Println("Len(Args): " + strconv.Itoa(len(os.Args)))
+	//fmt.Println("Len(Args): " + strconv.Itoa(len(os.Args)))
 
 	var puerto string
 	if len(os.Args) == 2 {
@@ -31,7 +30,6 @@ func main() {
 
 	fmt.Println("Escuchando en el puerto " + puerto + "...")
 
-	
 	clock := make(map[string]dns_service.ClockVector)
 
 	// Setear server
@@ -45,5 +43,4 @@ func main() {
 		log.Fatalf("Failed to serve gRPC server on port %s: %v", puerto, err)
 	}
 	fmt.Println("Server corriendo...")
-
 }

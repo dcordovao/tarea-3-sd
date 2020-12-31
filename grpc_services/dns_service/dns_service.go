@@ -18,7 +18,7 @@ const zf_folder_path_3 = "servidor_dns/zf_files3"
 var zf_folder_paths = []string{zf_folder_path_1, zf_folder_path_2, zf_folder_path_3}
 
 type ClockVector struct {
-	x, y, z int
+	X, Y, Z int
 }
 
 type Server struct {
@@ -28,11 +28,11 @@ type Server struct {
 // Esta funcion suma 1 en la posicion del vector correspondiente al server indicado por index
 func sumar_uno_a_reloj(c ClockVector, index int) ClockVector {
 	if index == 0 {
-		return ClockVector{x: c.x + 1, y: c.y, z: c.z}
+		return ClockVector{X: c.X + 1, Y: c.Y, Z: c.Z}
 	} else if index == 1 {
-		return ClockVector{x: c.x, y: c.y + 1, z: c.z}
+		return ClockVector{X: c.X, Y: c.Y + 1, Z: c.Z}
 	} else if index == 2 {
-		return ClockVector{x: c.x, y: c.y, z: c.z + 1}
+		return ClockVector{X: c.X, Y: c.Y, Z: c.Z + 1}
 	} else {
 		log.Fatal("ERROR, indice de reloj erroneo")
 		return ClockVector{}
@@ -41,7 +41,7 @@ func sumar_uno_a_reloj(c ClockVector, index int) ClockVector {
 
 // Funcion auxiliar para printear y debbuguear
 func reloj_a_string(c ClockVector) string {
-	return strconv.Itoa(c.x) + " " + strconv.Itoa(c.y) + " " + strconv.Itoa(c.z)
+	return strconv.Itoa(c.X) + " " + strconv.Itoa(c.Y) + " " + strconv.Itoa(c.Z)
 }
 
 func check_if_name_in_domain(file_name string, new_name string) bool {
@@ -80,7 +80,7 @@ func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, erro
 	return &Message{Body: "Conectado desde name_service! "}, nil
 }
 
-func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, error) {
+func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandResponse, error) {
 
 	file_name := zf_folder_paths[nombre.IdDns] + "/" + nombre.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
@@ -118,12 +118,14 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*Message, err
 			// Actualizar reloj
 			s.Relojes[nombre.Domain] = sumar_uno_a_reloj(s.Relojes[nombre.Domain], int(nombre.IdDns))
 		} else {
-			return &Message{Body: "Nombre no creado. El nombre ya estaba registrado en el dominio..."}, nil
+			return &CommandResponse{Body: "Nombre no creado. El nombre ya estaba registrado en el dominio...", Clock: nil}, nil
 		}
 	}
-
-	fmt.Printf("reloj dominio " + nombre.Domain + ": " + reloj_a_string(s.Relojes[nombre.Domain]))
-	return &Message{Body: "Nombre creado con exito"}, nil
+	ultimo_reloj := s.Relojes[nombre.Domain]
+	fmt.Printf("reloj dominio " + nombre.Domain + ": " + reloj_a_string(ultimo_reloj))
+	reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
+	response := &CommandResponse{Body: "Nombre creado con exito", Clock: reloj_mensaje}
+	return response, nil
 
 }
 
@@ -132,6 +134,7 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message,
 	file_name := zf_folder_paths[update_info.IdDns] + "/" + update_info.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
+		log.Printf("Se trato de hacer update a un dominio no existente...")
 		return &Message{Body: "ERROR! Ese dominio no existe..."}, nil
 	}
 	// Si ya existe el archivo, lo leemos en busca del nombre que queremos modificar
@@ -197,6 +200,16 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*Message,
 	}
 
 	return &Message{Body: "Información actualizada con exito!"}, nil
+}
+
+// Esta funcion solo retorna el vector reloj del nombre.dominio solicitado
+func (s *Server) GetClock(ctx context.Context, domain *Message) (*ClockMessage, error) {
+	if val, ok := s.Relojes[domain.Body]; ok {
+		return &ClockMessage{X: int64(val.X), Y: int64(val.Y), Z: int64(val.Z)}, nil
+	} else {
+		// Si no existe retornar reloj con 0,0,0
+		return &ClockMessage{X: 0, Y: 0, Z: 0}, nil
+	}
 }
 
 func (s *Server) GetName(ctx context.Context, message *Message) (*Message, error) {
