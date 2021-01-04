@@ -25,6 +25,38 @@ type Server struct {
 	Relojes map[string]ClockVector
 }
 
+// Esta funcion escribe en el log de un dominio, si no está, lo crea
+func DomainLog(Name string, Domain string, Ip string, op string, IdDns int64) {
+	file_name := zf_folder_paths[IdDns] + "/" + Domain + ".log"
+	// Chequear si el log del dominio existe. Esto es true si no existe
+	if _, err := os.Stat(file_name); os.IsNotExist(err) {
+		log.Printf("Creando log: " + Domain + ".log")
+		
+		f, err := os.Create(file_name)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		defer f.Close()
+
+		f.WriteString(op + " " + Name + "." + Domain + " " + Ip)		
+
+	// Si ya existe, entonces agrega el comando al log
+	} else {		
+				
+		f, err := os.OpenFile(file_name, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		if err != nil {
+			panic(err)
+		}
+
+		defer f.Close()
+
+		if _, err = f.WriteString("\n" + op + " " + Name + "." + Domain + " " + Ip); err != nil {
+			panic(err)
+		}						
+	}
+}
+
 // Esta funcion suma 1 en la posicion del vector correspondiente al server indicado por index
 func sumar_uno_a_reloj(c ClockVector, index int) ClockVector {
 	if index == 0 {
@@ -125,8 +157,9 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandRespo
 	fmt.Println("Se creo con exito! Reloj dominio " + nombre.Domain + ": " + reloj_a_string(ultimo_reloj))
 	reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
 	response := &CommandResponse{Body: "Nombre creado con exito", Clock: reloj_mensaje}
+	
+	DomainLog(nombre.Name, nombre.Domain, nombre.Ip, "create", nombre.IdDns)
 	return response, nil
-
 }
 
 // Suponemos que al actualziar nombre, se da solo "nombre", y el dominio siempre se mantiene
@@ -266,6 +299,11 @@ func (s *Server) Delete(ctx context.Context, delete_info *DeleteInfo) (*CommandR
 		defer f.Close()
 
 		n_lines := len(txtlines)
+
+		if n_lines == 0 {
+			return &CommandResponse{Body: "ERROR! No se encontro ese nombre en el dominio...", Clock: nil}, nil
+		}
+
 		for _, eachline := range txtlines[:n_lines-1] {
 			f.WriteString(eachline + "\n")
 		}
