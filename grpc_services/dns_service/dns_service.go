@@ -142,11 +142,26 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandRespo
 				panic(err)
 			}
 
-			defer f.Close()
+			scanner := bufio.NewScanner(f)
+			scanner.Split(bufio.ScanLines)
+			var txtlines []string
 
-			if _, err = f.WriteString("\n" + nombre.Name + "." + nombre.Domain + " IN A " + nombre.Ip); err != nil {
+			for scanner.Scan() {
+				txtlines = append(txtlines, scanner.Text())
+			}
+			var salto string;
+			if len(txtlines) == 0 || txtlines[0] == "\n"{
+				salto = ""
+			} else {
+				salto = "\n"
+			}			
+
+
+			if _, err = f.WriteString(salto + nombre.Name + "." + nombre.Domain + " IN A " + nombre.Ip); err != nil {
 				panic(err)
 			}
+
+			f.Close()
 			// Actualizar reloj
 			s.Relojes[nombre.Domain] = sumar_uno_a_reloj(s.Relojes[nombre.Domain], int(nombre.IdDns))
 		} else {
@@ -203,12 +218,16 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*CommandR
 	if previusly_created {
 		if update_info.Opt == "name" {
 			antigua_ip := strings.Split(txtlines[index], " ")[3]
-			new_line := update_info.Value + "." + update_info.Domain + " IN A " + antigua_ip
-			txtlines[index] = new_line
+			new_line := update_info.Value + " IN A " + antigua_ip			
+			txtlines[index] = new_line			
 		} else {
 			new_line := update_info.Name + "." + update_info.Domain + " IN A " + update_info.Value
-			txtlines[index] = new_line
-		}
+			txtlines[index] = new_line			
+		}	
+
+		// Se escribe el cambio en el log
+		DomainLog(update_info.Name, update_info.Domain, update_info.Value, "update", update_info.IdDns)
+
 		// Luego de extraer la linea y modificarla, borramos el arhivo y lo escribimos denuevo
 
 		e := os.Remove(file_name)
@@ -237,10 +256,10 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*CommandR
 		fmt.Println("Se creo con exito! Reloj dominio " + update_info.Domain + ": " + reloj_a_string(ultimo_reloj))
 		reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
 		return &CommandResponse{Body: "Información actualizada con exito!", Clock: reloj_mensaje}, nil
+
 	} else {
 		return &CommandResponse{Body: "ERROR! No se encontro ese nombre en el dominio...", Clock: nil}, nil
 	}
-
 }
 
 // Suponemos que al actualziar nombre, se da solo "nombre", y el dominio siempre se mantiene
@@ -298,16 +317,14 @@ func (s *Server) Delete(ctx context.Context, delete_info *DeleteInfo) (*CommandR
 		}
 		defer f.Close()
 
-		n_lines := len(txtlines)
+		n_lines := len(txtlines)		
 
-		if n_lines == 0 {
-			return &CommandResponse{Body: "ERROR! No se encontro ese nombre en el dominio...", Clock: nil}, nil
-		}
-
-		for _, eachline := range txtlines[:n_lines-1] {
-			f.WriteString(eachline + "\n")
-		}
-		f.WriteString(txtlines[n_lines-1])
+		if n_lines != 0{
+			for _, eachline := range txtlines[:n_lines-1] {
+				f.WriteString(eachline + "\n")
+			}	
+			f.WriteString(txtlines[n_lines-1])
+		}				
 
 		// Actualizar reloj
 		s.Relojes[delete_info.Domain] = sumar_uno_a_reloj(s.Relojes[delete_info.Domain], int(delete_info.IdDns))
@@ -316,6 +333,10 @@ func (s *Server) Delete(ctx context.Context, delete_info *DeleteInfo) (*CommandR
 		ultimo_reloj := s.Relojes[delete_info.Domain]
 		fmt.Println("Se creo con exito! Reloj dominio " + delete_info.Domain + ": " + reloj_a_string(ultimo_reloj))
 		reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
+
+		// Se escribe el cambio en el log
+		DomainLog(delete_info.Name, delete_info.Domain, "", "delete", delete_info.IdDns)
+
 		return &CommandResponse{Body: "Información eliminada con exito!", Clock: reloj_mensaje}, nil
 	} else {
 		return &CommandResponse{Body: "ERROR! No se encontro ese nombre en el dominio...", Clock: nil}, nil
