@@ -16,6 +16,8 @@ import (
 	//"strconv" // Conversion de strings a int y viceversa
 )
 
+
+
 func main() {
 
 	//------------------------------------------------------
@@ -71,12 +73,16 @@ func main() {
 		message := broker_service.Message{
 			Body: params[1],
 		}
-		response, err := s.EnviarDom(context.Background(), &message)
+		r, err := s.Connect(context.Background(), &message)
 		if err != nil {
 			log.Fatalf("Error when calling SayHello: %s", err)
 		}
 
-		log.Printf("Response from Broker: %s", response.Body)
+		if r.Clock.X == 0 && r.Clock.Y == 0 && r.Clock.Z == 0 {
+			fmt.Println("Dominio no creado aun")
+		} else {
+			fmt.Println(r.Body, r.Clock.Z)
+		}		
 	}
 
 }

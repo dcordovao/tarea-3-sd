@@ -12,10 +12,21 @@ message DnsAddress {
   int64 idDns = 2;
 }
 
+message ClockMessage {
+  int64 x = 1;
+  int64 y = 2;
+  int64 z = 3;
+}
+
+message CommandResponse {
+  string body = 1;
+  ClockMessage clock = 2;
+}
+
 
 service BrokerService {
   rpc EnviarVerbo(Message) returns (DnsAddress) {}
   rpc SayHello(Message) returns (Message) {}
-  rpc EnviarDom(Message) returns (Message) {}
+  rpc Connect(Message) returns (CommandResponse) {}
 }
 

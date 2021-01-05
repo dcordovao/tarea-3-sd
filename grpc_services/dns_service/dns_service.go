@@ -353,13 +353,51 @@ func (s *Server) GetClock(ctx context.Context, domain *Message) (*ClockMessage, 
 	}
 }
 
-func (s *Server) GetName(ctx context.Context, message *Message) (*Message, error) {
+func (s *Server) GetName(ctx context.Context, nombre *NewName) (*CommandResponse, error) {
 	//-----------------------------------------------------------//
 	//----------- EN ESTA PARTE SE BUSCA EL DNS -----------------//
 	//----------- CON EL DOMINIO SOLICITADO Y SE RETORNA LA IP --//
 	//----------- Y EL RELOJ VECTORIAL ASOCIADO -----------------//
-	//-----------------------------------------------------------//
+	//-----------------------------------------------------------//	
 
-	// Por ahora solo se retorna un string para probar. Borrar despues!!
-	return &Message{Body: "Llego al DNS!!"}, nil
+	file_name := zf_folder_paths[nombre.IdDns] + "/" + nombre.Domain + ".zf"
+	// Chequear si el dominio existe. Esto es true si no existe
+	if _, err := os.Stat(file_name); os.IsNotExist(err) {				
+		return &CommandResponse{Body: "Error, aún no ha sido creado el dominio: " + nombre.Domain + ".zf", Clock: nil}, nil
+		
+	} else {
+		// Leer el archivo, leer linea por linea, y si el nombre no existe es tamos mal.}		
+
+		file, err := os.Open(file_name)
+		if err != nil {
+			log.Fatalf("failed opening file: %s", err)
+		}
+
+		scanner := bufio.NewScanner(file)
+		scanner.Split(bufio.ScanLines)
+		var txtlines []string
+
+		for scanner.Scan() {
+			txtlines = append(txtlines, scanner.Text())
+		}
+
+		file.Close()
+
+		ip_addr := ""
+		for _, eachline := range txtlines[:] {
+			//fmt.Println(eachline)
+			lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
+			if lname == nombre.Name {
+				ip_addr = strings.Split(eachline, " ")[3]
+				break
+			}
+		}			
+		if ip_addr {
+			dom := strings.Split(nombre.Domain, ".")[0]
+			val := s.Relojes[dom]				
+			return &CommandResponse{Body: ip_addr, Clock: &ClockMessage{X: int64(val.X), Y: int64(val.Y), Z: int64(val.Z)}}, nil
+		} else {
+			return &CommandResponse{Body: "Error, el nombre no existe", Clock: &ClockMessage{X: 0, Y: 0, Z: 0}}, nil
+		}	
+	}		
 }

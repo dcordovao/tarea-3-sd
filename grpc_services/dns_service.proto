@@ -43,6 +43,6 @@ service DnsService {
   rpc CreateName(NewName) returns (CommandResponse) {}
   rpc Update(UpdateInfo) returns (CommandResponse) {}
   rpc Delete(DeleteInfo) returns (CommandResponse) {}
-  rpc GetName(Message) returns (Message) {}
+  rpc GetName(NewName) returns (CommandResponse) {}
   rpc GetClock(Message) returns (ClockMessage) {}
 }

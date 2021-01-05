@@ -7,7 +7,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	//"strings"
+	"strings"
 	"math/rand"
 )
 
@@ -28,7 +28,7 @@ func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, erro
 
 //////   Esta función recibe la request del cliente    ///////
 //////   y retorna la IP y el Reloj                    ///////
-func (s *Server) EnviarDom(ctx context.Context, message *Message) (*Message, error) {
+func (s *Server) Connect(ctx context.Context, message *Message) (*CommandResponse, error) {
 	log.Printf("Received from client: %s, now sending to dns sevice", message.Body)
 
 	//----------------------------------------------------------//
@@ -36,17 +36,23 @@ func (s *Server) EnviarDom(ctx context.Context, message *Message) (*Message, err
 	//----------- IP Y EL RELOJ SEGUN EL DOMINIO SOLICITADO ----//
 	//----------------------------------------------------------//
 
+	name := strings.Split(message.Body, ".")[0] 
+	domain := strings.Split(message.Body, ".")[1]
+
 	var conn_dns *grpc.ClientConn
 
+	random_int := rand.Intn(len(ips_dns))
+	random_ip := ips_dns[random_int]
+
 	//IP_DNS = ":9001" Esto cambia segun quien lo tiene
-	conn_dns, err := grpc.Dial(":9001", grpc.WithInsecure())
+	conn_dns, err := grpc.Dial(random_ip, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Could not connect: %s", err)
 	}
 	defer conn_dns.Close()
 
 	// Mensage que llego desde el cliente
-	get_request := dns_service.Message{Body: message.Body}
+	get_request := dns_service.NewName{Name: name, Domain: domain, Ip: random_ip, IdDns: int64(random_int)}
 
 	s_dns := dns_service.NewDnsServiceClient(conn_dns)
 
@@ -55,8 +61,15 @@ func (s *Server) EnviarDom(ctx context.Context, message *Message) (*Message, err
 		log.Fatalf("Error al tratar de crear nombre: %s", err)
 	}
 	log.Printf("Response from Server: %s", response.Body)
+	log.Printf(response.Body)
 
-	return &Message{Body: response.Body}, nil
+	if response.Clock == nil {
+		return &CommandResponse{Body: "Error, aún no ha sido creado el dominio: " + domain + ".zf", Clock: nil}, nil
+	}
+
+	clock_res := &ClockMessage{X: response.Clock.X, Y: response.Clock.Y, Z: response.Clock.Z}
+	log.Printf(string(response.Clock.X))
+	return &CommandResponse{Body: response.Body, Clock: clock_res}, nil
 }
 
 //////   Recibe Verbo     ///////
