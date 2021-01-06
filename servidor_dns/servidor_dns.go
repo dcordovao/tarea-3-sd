@@ -20,7 +20,7 @@ func main() {
 	if len(os.Args) == 2 {
 		puerto = ":900" + os.Args[1]
 	} else {
-		puerto = ":9001"
+		puerto = ":9000"
 	}
 
 	lis, err := net.Listen("tcp", puerto)
