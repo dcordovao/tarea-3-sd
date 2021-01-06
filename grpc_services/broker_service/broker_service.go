@@ -75,7 +75,7 @@ func (s *Server) Connect(ctx context.Context, message *Message) (*CommandRespons
 	tipo_error := estado[len(estado)-1]
 
 	if tipo_error != "Nombre" && tipo_error != "Dominio" {
-		ip_id := response.Body + " " + strconv.Itoa(random_int)
+		ip_id := response.Body //+ " " + strconv.Itoa(random_int)
 		clock_res := &ClockMessage{X: response.Clock.X, Y: response.Clock.Y, Z: response.Clock.Z}		
 		return &CommandResponse{Body: ip_id, Clock: clock_res, Ipdns: random_ip, Iddns: int64(random_int)}, nil
 	}
