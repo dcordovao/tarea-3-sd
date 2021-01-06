@@ -6,16 +6,12 @@ Tarea sobre un sistema DNS implementando consistencia
 Sebastián Sanchez Lagos 201504022-2
 Diego Córdova Opazo 201403009-6
 
-## Instrucciones ejecución
-+ Primero se debe ejecutar en 4 terminales distintas el comando make firewall, 3 para los dns y 1 para el broker.
+## Instrucciones de ejecución
++ Primero se debe ejecutar en 3 máquinas distintas el comando make, luego en una 4 máquina ejecutar make broker
 
-+ Segundo ejecutar el comando make en cada terminal para iniciar cada DNS y el broker. Una vez iniciados estos 4 componentes, elegir cualquiera de las maquinas de DNS abrir otra terminal y ejecutar el comando make admin. Después, elegir cualquiera de las maquinas de DNS abrir otra terminal y ejecutar el comando make cliente.
++ Una vez iniciados estos 4 componentes, elegir cualquiera de las maquinas de DNS, abrir otra terminal y ejecutar el comando make admin. Después, elegir cualquiera de las maquinas de DNS abrir otra terminal y ejecutar el comando make cliente.
 
-+ Tercero dirigirse a la linea de comandos del administrador y escribir culaquiera de las 3 posibles instrucciones con el formato indicado a continuación:
-	+ create <nombre.dominio> <ip>, ej.: create cristal.cl 10.9.8.7
-	+ update <nombre.dominio> ip <ip>, ej.: update cristal.cl ip 10.9.9.8
-	+ update <nombre1.dominio> name <nombre2.dominio>, ej.: update cristal.cl name escudo.cl
-	+ delete <nombre.dominio>, ej.: delete deepl.com
++ Cada vez que se desee ejecutar todo el programa nuevamente, ejecutar make clean en los DNS y luego make para ejecutar nuevamente.
 
 ## El sistema consiste en:
 
@@ -58,6 +54,11 @@ Diego Córdova Opazo 201403009-6
 
 + Administrador(es)
 + Explicación: 
+	+ escribir en la terminal cualquiera de estos comandos:
+		+ create <nombre.dominio> <ip>, ej.: create cristal.cl 10.9.8.7
+		+ update <nombre.dominio> ip <ip>, ej.: update cristal.cl ip 10.9.9.8
+		+ update <nombre1.dominio> name <nombre2.dominio>, ej.: update cristal.cl name escudo.cl
+		+ delete <nombre.dominio>, ej.: delete deepl.com
 	+ Se ingresa y valida el comando escogido.
 	+ Se envia la solicitud al broker
 	+ El broker retorna una ip al azar y luego el admin se conecta directamente al dns escogido.

@@ -40,10 +40,10 @@ func compare_clocks(new_clock ClockVector, last_clock ClockVector) bool {
 func main() {
 
 	//------------------------------------------------------
-	//////// Conectarse como cliente al NameService ////////
+	//////// Conectarse como cliente al Broker ////////
 	//------------------------------------------------------
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	conn, err := grpc.Dial("10.10.28.124:9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Could not connect: %s", err)
 	}

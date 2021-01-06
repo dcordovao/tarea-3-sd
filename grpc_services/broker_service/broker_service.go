@@ -12,9 +12,9 @@ import (
 	"math/rand"
 )
 
-const ip_dns_1 = ":9001" //"10.10.28.121:9000"
-const ip_dns_2 = ":9002" //"10.10.28.122:9000"
-const ip_dns_3 = ":9003" //"10.10.28.123:9000"
+const ip_dns_1 = "10.10.28.121:9000"
+const ip_dns_2 = "10.10.28.122:9000"
+const ip_dns_3 = "10.10.28.123:9000"
 var ips_dns = [...]string{ip_dns_1, ip_dns_2, ip_dns_3}
 
 type Server struct {

@@ -11,11 +11,9 @@ import (
 	"golang.org/x/net/context"
 )
 
-const zf_folder_path_1 = "servidor_dns/zf_files1"
-const zf_folder_path_2 = "servidor_dns/zf_files2"
-const zf_folder_path_3 = "servidor_dns/zf_files3"
+const zf_folder_path_1 = "servidor_dns/zf_files"
 
-var zf_folder_paths = []string{zf_folder_path_1, zf_folder_path_2, zf_folder_path_3}
+var zf_folder_paths = []string{zf_folder_path_1}
 
 type ClockVector struct {
 	X, Y, Z int
