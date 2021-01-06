@@ -7,7 +7,8 @@ Sebastián Sanchez Lagos 201504022-2
 Diego Córdova Opazo 201403009-6
 
 ## Instrucciones de ejecución
-+ Primero se debe ejecutar en 3 máquinas distintas el comando make, luego en una 4 máquina ejecutar make broker
++ Primero se debe ejecutar en 3 máquinas distintas el comando make firewall, luego poner la clave de esa maquina y despues ejecutar make.
++ Luego en una 4 máquina ejecutar make firewall, poner la clave y después make broker
 
 + Una vez iniciados estos 4 componentes, elegir cualquiera de las maquinas de DNS, abrir otra terminal y ejecutar el comando make admin. Después, elegir cualquiera de las maquinas de DNS abrir otra terminal y ejecutar el comando make cliente.
 

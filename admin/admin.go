@@ -256,7 +256,7 @@ func main() {
 			log.Printf("Response from Server: %s", response.Body)
 			// Si el reloj recibido no es nulo, se guarda como ultimo reloj de ese dominio
 			if response.Clock != nil {
-				adminClocks[new_name.Domain] = SeenClock{vector: clock_to_struct(response.Clock), ip: ip_connection, idDns: id_dns}
+				adminClocks[update_info.Domain] = SeenClock{vector: clock_to_struct(response.Clock), ip: ip_connection, idDns: id_dns}
 			}
 		}
 
@@ -272,7 +272,7 @@ func main() {
 			log.Printf("Response from Server: %s", response.Body)
 			// Si el reloj recibido no es nulo, se guarda como ultimo reloj de ese dominio
 			if response.Clock != nil {
-				adminClocks[new_name.Domain] = SeenClock{vector: clock_to_struct(response.Clock), ip: ip_connection, idDns: id_dns}
+				adminClocks[delete_info.Domain] = SeenClock{vector: clock_to_struct(response.Clock), ip: ip_connection, idDns: id_dns}
 			}
 		}
 	}
