@@ -38,6 +38,26 @@ message CommandResponse {
   ClockMessage clock = 2;
 }
 
+message IdDns {
+  int64 idDns = 1;
+}
+
+message Modificaciones {
+  repeated ModsDominio dominios  = 1;
+}
+
+
+message ModsDominio {
+  repeated Nombre nombres = 1;
+}
+
+message Nombre {
+  string nombre = 1;
+}
+
+
+
+
 service DnsService {
   rpc SayHello(Message) returns (Message) {}
   rpc CreateName(NewName) returns (CommandResponse) {}
@@ -45,4 +65,6 @@ service DnsService {
   rpc Delete(DeleteInfo) returns (CommandResponse) {}
   rpc GetName(NewName) returns (CommandResponse) {}
   rpc GetClock(Message) returns (ClockMessage) {}
+  rpc PedirModificaciones(IdDns) returns (Modificaciones) {}
+  rpc PropagarCambios(IdDns) returns (Message) {}
 }

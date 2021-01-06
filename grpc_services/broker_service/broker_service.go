@@ -3,13 +3,14 @@ package broker_service
 import (
 	"log"
 	//"fmt"
+	"strconv"
+
 	"github.com/dcordova/sd_tarea3/grpc_services/dns_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"strconv"
 
-	"strings"
 	"math/rand"
+	"strings"
 )
 
 const ip_dns_1 = ":9001" //"10.10.28.121:9000"
@@ -36,24 +37,24 @@ func (s *Server) Connect(ctx context.Context, message *Message) (*CommandRespons
 	//----------- EN ESTA PARTE SE PIDE AL DNS LA --------------//
 	//----------- IP Y EL RELOJ SEGUN EL DOMINIO SOLICITADO ----//
 	//----------------------------------------------------------//
-	mens := strings.Split(message.Body, " ")[0] 
+	mens := strings.Split(message.Body, " ")[0]
 
-	name := strings.Split(mens, ".")[0] 
+	name := strings.Split(mens, ".")[0]
 	domain := strings.Split(mens, ".")[1]
 
 	var random_ip string
 	var random_int int
 	if len(strings.Split(message.Body, " ")) > 2 {
 		// Ya no es random
-		//random_ip = strings.Split(message.Body, " ")[1]		
-		random_int,_ = strconv.Atoi(strings.Split(message.Body, " ")[2])		
-		
+		//random_ip = strings.Split(message.Body, " ")[1]
+		random_int, _ = strconv.Atoi(strings.Split(message.Body, " ")[2])
+
 	} else {
-		random_int = rand.Intn(len(ips_dns))		
+		random_int = rand.Intn(len(ips_dns))
 	}
 	random_ip = ips_dns[random_int]
 
-	var conn_dns *grpc.ClientConn	
+	var conn_dns *grpc.ClientConn
 
 	//IP_DNS = ":9001" Esto cambia segun quien lo tiene
 	conn_dns, err := grpc.Dial(random_ip, grpc.WithInsecure())
@@ -67,20 +68,20 @@ func (s *Server) Connect(ctx context.Context, message *Message) (*CommandRespons
 
 	s_dns := dns_service.NewDnsServiceClient(conn_dns)
 
-	response, err := s_dns.GetName(context.Background(), &get_request)	
-	if err != nil {		
+	response, err := s_dns.GetName(context.Background(), &get_request)
+	if err != nil {
 		log.Fatalf("Error al conectarse al GetName del Dns: %s", err)
 	}
-	estado := strings.Split(response.Body , " ")
+	estado := strings.Split(response.Body, " ")
 	tipo_error := estado[len(estado)-1]
 
 	if tipo_error != "Nombre" && tipo_error != "Dominio" {
 		ip_id := response.Body //+ " " + strconv.Itoa(random_int)
-		clock_res := &ClockMessage{X: response.Clock.X, Y: response.Clock.Y, Z: response.Clock.Z}		
+		clock_res := &ClockMessage{X: response.Clock.X, Y: response.Clock.Y, Z: response.Clock.Z}
 		return &CommandResponse{Body: ip_id, Clock: clock_res, Ipdns: random_ip, Iddns: int64(random_int)}, nil
 	}
 	// No estaba
-	return &CommandResponse{Body: response.Body, Clock: nil, Ipdns: random_ip, Iddns: int64(random_int)}, nil								
+	return &CommandResponse{Body: response.Body, Clock: nil, Ipdns: random_ip, Iddns: int64(random_int)}, nil
 }
 
 //////   Recibe Verbo     ///////
@@ -93,4 +94,36 @@ func (s *Server) EnviarVerbo(ctx context.Context, operacion *Message) (*DnsAddre
 	random_ip := ips_dns[random_int]
 
 	return &DnsAddress{Ip: random_ip, IdDns: int64(random_int)}, nil
+}
+
+func (s *Server) PropagarCambios(ctx context.Context, message *Message) (*Message, error) {
+	//var cambios_server_1 map[string][]string
+	//cambios_server_1 = make(map[string][]string)
+
+	// Siempre se conectara primero al dns 1
+	//ip_dns = ip_dns_1
+	//var modificaciones = dns_service.Modificaciones
+
+	log.Println("Propagando cambios...")
+	var conn_dns *grpc.ClientConn
+
+	//IP_DNS = ":9001" Esto cambia segun quien lo tiene
+	conn_dns, err := grpc.Dial(ip_dns_2, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Could not connect: %s", err)
+	}
+	defer conn_dns.Close()
+
+	// Mensage que llego desde el cliente
+
+	s_dns := dns_service.NewDnsServiceClient(conn_dns)
+
+	id_dns := dns_service.IdDns{IdDns: 1}
+	response, err := s_dns.PropagarCambios(context.Background(), &id_dns)
+	if err != nil {
+		log.Fatalf("Error al pedir al servidor 2 que propague camibios: %s", err)
+	}
+	log.Println("Respuesta servidor 2:", response.Body)
+
+	return &Message{Body: "Saludos desde broker_server! "}, nil
 }

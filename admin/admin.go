@@ -167,7 +167,20 @@ func main() {
 			}
 		}
 
-		if option != "delete" && option != "create" && option != "update" {
+		if option == "propagate" {
+			if len(params) != 1 {
+				log.Printf("Cuidado!, comando propagate debería tener0 parametros...")
+				continue
+			}
+			response, err := broker.PropagarCambios(context.Background(), &message)
+			if err != nil {
+				log.Fatalf("Error propagar cambios: %s", err)
+			}
+			log.Printf("Response from Server: %s", response.Body)
+			continue
+		}
+
+		if option != "delete" && option != "create" && option != "update" && option != "propagate" {
 			log.Printf("Cuidado!, ese comando no existe... !")
 			continue
 		}

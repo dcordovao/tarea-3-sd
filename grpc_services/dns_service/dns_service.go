@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
 	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 )
+
+const ip_dns_1_1 = ":9001" //"10.10.28.121:9000"
 
 const zf_folder_path_1 = "servidor_dns/zf_files1"
 const zf_folder_path_2 = "servidor_dns/zf_files2"
@@ -31,7 +35,7 @@ func DomainLog(Name string, Domain string, Ip string, op string, IdDns int64) {
 	// Chequear si el log del dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
 		log.Printf("Creando log: " + Domain + ".log")
-		
+
 		f, err := os.Create(file_name)
 		if err != nil {
 			fmt.Println(err)
@@ -39,11 +43,11 @@ func DomainLog(Name string, Domain string, Ip string, op string, IdDns int64) {
 		}
 		defer f.Close()
 
-		f.WriteString(op + " " + Name + "." + Domain + " " + Ip)		
+		f.WriteString(op + " " + Name + "." + Domain + " " + Ip)
 
-	// Si ya existe, entonces agrega el comando al log
-	} else {		
-				
+		// Si ya existe, entonces agrega el comando al log
+	} else {
+
 		f, err := os.OpenFile(file_name, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
 			panic(err)
@@ -53,7 +57,7 @@ func DomainLog(Name string, Domain string, Ip string, op string, IdDns int64) {
 
 		if _, err = f.WriteString("\n" + op + " " + Name + "." + Domain + " " + Ip); err != nil {
 			panic(err)
-		}						
+		}
 	}
 }
 
@@ -137,7 +141,6 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandRespo
 
 		// Si el nombre no existia en el dominio no existia, se puede crear crea
 		if !previusly_created {
-			
 
 			file, err := os.Open(file_name)
 			if err != nil {
@@ -153,8 +156,8 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandRespo
 			}
 
 			file.Close()
-			var salto string;
-			if len(txtlines) == 0{
+			var salto string
+			if len(txtlines) == 0 {
 				salto = ""
 			} else {
 				salto = "\n"
@@ -180,7 +183,7 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandRespo
 	fmt.Println("Se creo con exito! Reloj dominio " + nombre.Domain + ": " + reloj_a_string(ultimo_reloj))
 	reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
 	response := &CommandResponse{Body: "Nombre creado con exito", Clock: reloj_mensaje}
-	
+
 	DomainLog(nombre.Name, nombre.Domain, nombre.Ip, "create", nombre.IdDns)
 	return response, nil
 }
@@ -226,12 +229,12 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*CommandR
 	if previusly_created {
 		if update_info.Opt == "name" {
 			antigua_ip := strings.Split(txtlines[index], " ")[3]
-			new_line := update_info.Value + " IN A " + antigua_ip			
-			txtlines[index] = new_line			
+			new_line := update_info.Value + " IN A " + antigua_ip
+			txtlines[index] = new_line
 		} else {
 			new_line := update_info.Name + "." + update_info.Domain + " IN A " + update_info.Value
-			txtlines[index] = new_line			
-		}	
+			txtlines[index] = new_line
+		}
 
 		// Se escribe el cambio en el log
 		DomainLog(update_info.Name, update_info.Domain, update_info.Value, "update", update_info.IdDns)
@@ -325,14 +328,14 @@ func (s *Server) Delete(ctx context.Context, delete_info *DeleteInfo) (*CommandR
 		}
 		defer f.Close()
 
-		n_lines := len(txtlines)		
+		n_lines := len(txtlines)
 
-		if n_lines != 0{
+		if n_lines != 0 {
 			for _, eachline := range txtlines[:n_lines-1] {
 				f.WriteString(eachline + "\n")
-			}	
+			}
 			f.WriteString(txtlines[n_lines-1])
-		}				
+		}
 
 		// Actualizar reloj
 		s.Relojes[delete_info.Domain] = sumar_uno_a_reloj(s.Relojes[delete_info.Domain], int(delete_info.IdDns))
@@ -366,14 +369,14 @@ func (s *Server) GetName(ctx context.Context, nombre *NewName) (*CommandResponse
 	//----------- EN ESTA PARTE SE BUSCA EL DNS -----------------//
 	//----------- CON EL DOMINIO SOLICITADO Y SE RETORNA LA IP --//
 	//----------- Y EL RELOJ VECTORIAL ASOCIADO -----------------//
-	//-----------------------------------------------------------//	
+	//-----------------------------------------------------------//
 
 	file_name := zf_folder_paths[nombre.IdDns] + "/" + nombre.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
-	if _, err := os.Stat(file_name); os.IsNotExist(err) {						
+	if _, err := os.Stat(file_name); os.IsNotExist(err) {
 		return &CommandResponse{Body: "Error, no existe el Dominio", Clock: nil}, nil
 	} else {
-		// Leer el archivo, leer linea por linea, y si el nombre no existe es tamos mal.}		
+		// Leer el archivo, leer linea por linea, y si el nombre no existe es tamos mal.}
 		file, err := os.Open(file_name)
 		if err != nil {
 			log.Fatalf("failed opening file: %s", err)
@@ -397,13 +400,160 @@ func (s *Server) GetName(ctx context.Context, nombre *NewName) (*CommandResponse
 				ip_addr = strings.Split(eachline, " ")[3]
 				break
 			}
-		}			
+		}
 		if ip_addr != " " {
 			dom := strings.Split(nombre.Domain, ".")[0]
-			val := s.Relojes[dom]				
+			val := s.Relojes[dom]
 			return &CommandResponse{Body: ip_addr, Clock: &ClockMessage{X: int64(val.X), Y: int64(val.Y), Z: int64(val.Z)}}, nil
 		} else {
 			return &CommandResponse{Body: "Error, no existe el Nombre", Clock: nil}, nil
-		}	
-	}		
+		}
+	}
+}
+
+func (s *Server) PedirModificaciones(ctx context.Context, id_dns *IdDns) (*Modificaciones, error) {
+	zf_path := zf_folder_paths[id_dns.IdDns]
+	var log_files []string
+	//En esta map se guardaran los dominios con una lista de los nombres modificados por dominio
+	//var modificaciones map[string][]string
+	//modificaciones = make(map[string][]string)
+	err := filepath.Walk(zf_path, func(path string, info os.FileInfo, err error) error {
+		if filepath.Ext(path) == ".logs" {
+			log_files = append(log_files, path)
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	// leer cada archivo logs
+
+	/*
+		for _, file := range log_files {
+			file_name := zf_folder_paths[id_dns.IdDns] + "/" + file
+			file, err := os.Open(file_name)
+			if err != nil {
+				log.Fatalf("failed opening file: %s", err)
+			}
+
+			scanner := bufio.NewScanner(file)
+			scanner.Split(bufio.ScanLines)
+			var txtlines []string
+
+			for scanner.Scan() {
+				txtlines = append(txtlines, scanner.Text())
+			}
+
+			file.Close()
+
+			for _, eachline := range txtlines[:] {
+				//fmt.Println(eachline)
+				lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
+
+
+			}
+			return previusly_created
+		} */
+
+	retorno := []*ModsDominio{}
+	return &Modificaciones{Dominios: retorno}, nil
+}
+
+func (s *Server) PropagarCambios(ctx context.Context, id_dns *IdDns) (*Message, error) {
+	zf_path := zf_folder_paths[id_dns.IdDns]
+	var log_files []string
+	//En esta map se guardaran los dominios con una lista de los nombres modificados por dominio
+	//var modificaciones map[string][]string
+	//modificaciones = make(map[string][]string)
+
+	fmt.Println("Propagandos cambios hacia el servidor 1...")
+
+	err := filepath.Walk(zf_path, func(path string, info os.FileInfo, err error) error {
+		if filepath.Ext(path) == ".log" {
+			log_files = append(log_files, path)
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	// leer cada archivo logs y ejecutar cada comando en el server 1
+	for _, file := range log_files {
+		file_name := file
+		file, err := os.Open(file_name)
+		if err != nil {
+			log.Fatalf("failed opening file: %s", err)
+		}
+
+		fmt.Println("Leyendo " + file.Name() + " ...")
+
+		scanner := bufio.NewScanner(file)
+		scanner.Split(bufio.ScanLines)
+		var txtlines []string
+
+		for scanner.Scan() {
+			txtlines = append(txtlines, scanner.Text())
+		}
+
+		file.Close()
+
+		// Conectarse al dns 1 para enviarle los cambios
+		var conn_dns *grpc.ClientConn
+		conn_dns, err = grpc.Dial(ip_dns_1_1, grpc.WithInsecure())
+		if err != nil {
+			log.Fatalf("Could not connect: %s", err)
+		}
+		defer conn_dns.Close()
+
+		s_dns1 := NewDnsServiceClient(conn_dns)
+
+		for _, eachline := range txtlines[:] {
+			fmt.Println("Enviando comando: " + eachline)
+			params := strings.Split(eachline, " ")
+			option := params[0]
+
+			// Extraer nombre y dominio
+			name := params[1]
+			name_split := strings.Split(name, ".")
+
+			if option == "create" {
+				// Aqui comunicarse con el BROKER y obtener una ip de un dns
+				new_ip := params[2]
+
+				// Enviar al servidor dns el nombre que se quiere crear
+				new_name := NewName{Name: name_split[0], Domain: name_split[1], Ip: new_ip, IdDns: int64(0)}
+
+				// Pedir el vector reloj del dominio
+
+				response, err := s_dns1.CreateName(context.Background(), &new_name)
+				if err != nil {
+					log.Fatalf("Error al tratar de crear nombre: %s", err)
+				}
+				log.Printf("Response from Server: %s", response.Body)
+				// Si el reloj recibido no es nulo, se guarda como ultimo reloj de ese dominio
+			}
+			if option == "update" {
+
+				update_info := UpdateInfo{Name: name_split[0], Domain: name_split[1], Opt: params[2], Value: params[3], IdDns: int64(0)}
+
+				response, err := s_dns1.Update(context.Background(), &update_info)
+				if err != nil {
+					log.Fatalf("Error al tratar de updatear nombre: %s", err)
+				}
+				log.Printf("Response from Server: %s", response.Body)
+			}
+			if option == "delete" {
+				delete_info := DeleteInfo{Name: name_split[0], Domain: name_split[1], IdDns: int64(0)}
+
+				response, err := s_dns1.Delete(context.Background(), &delete_info)
+				if err != nil {
+					log.Fatalf("Error al tratar eliminar nombre: %s", err)
+				}
+				fmt.Printf("Response from Server: %s\n", response.Body)
+
+			}
+		}
+	}
+	fmt.Println("Cambios enviados al server 1 con exito.")
+	return &Message{Body: "Cambios enviados al server 1 con exito."}, nil
 }

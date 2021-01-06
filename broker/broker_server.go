@@ -25,8 +25,10 @@ func main() {
 	broker_service.RegisterBrokerServiceServer(grpcServer, &s)
 
 	////// Servicio de clientes ///////
+	go func() {
+		fmt.Println("Server corriendo...")
+	}()
 	if err = grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve gRPC server on port 9000: %v", err)
 	}
-	fmt.Println("Server corriendo...")
 }

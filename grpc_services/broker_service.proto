@@ -30,5 +30,6 @@ service BrokerService {
   rpc EnviarVerbo(Message) returns (DnsAddress) {}
   rpc SayHello(Message) returns (Message) {}
   rpc Connect(Message) returns (CommandResponse) {}
+  rpc PropagarCambios(Message) returns (Message) {}
 }
 
