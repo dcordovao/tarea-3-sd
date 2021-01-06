@@ -2,10 +2,11 @@ package broker_service
 
 import (
 	"log"
-
+	//"fmt"
 	"github.com/dcordova/sd_tarea3/grpc_services/dns_service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"strconv"
 
 	"strings"
 	"math/rand"
@@ -35,14 +36,25 @@ func (s *Server) Connect(ctx context.Context, message *Message) (*CommandRespons
 	//----------- EN ESTA PARTE SE PIDE AL DNS LA --------------//
 	//----------- IP Y EL RELOJ SEGUN EL DOMINIO SOLICITADO ----//
 	//----------------------------------------------------------//
+	mens := strings.Split(message.Body, " ")[0] 
 
-	name := strings.Split(message.Body, ".")[0] 
-	domain := strings.Split(message.Body, ".")[1]
+	name := strings.Split(mens, ".")[0] 
+	domain := strings.Split(mens, ".")[1]
 
-	var conn_dns *grpc.ClientConn
+	var random_ip string
+	var random_int int
+	if len(strings.Split(message.Body, " ")) > 2 {
+		// Ya no es random
+		//random_ip = strings.Split(message.Body, " ")[1]		
+		random_int,_ = strconv.Atoi(strings.Split(message.Body, " ")[2])
+		random_ip = ips_dns[random_int]
+		
+	} else {
+		random_int = rand.Intn(len(ips_dns))
+		random_ip = ips_dns[random_int]
+	}
 
-	random_int := rand.Intn(len(ips_dns))
-	random_ip := ips_dns[random_int]
+	var conn_dns *grpc.ClientConn	
 
 	//IP_DNS = ":9001" Esto cambia segun quien lo tiene
 	conn_dns, err := grpc.Dial(random_ip, grpc.WithInsecure())
@@ -56,20 +68,19 @@ func (s *Server) Connect(ctx context.Context, message *Message) (*CommandRespons
 
 	s_dns := dns_service.NewDnsServiceClient(conn_dns)
 
-	response, err := s_dns.GetName(context.Background(), &get_request)
-	if err != nil {
-		log.Fatalf("Error al tratar de crear nombre: %s", err)
+	response, err := s_dns.GetName(context.Background(), &get_request)	
+	if err != nil {		
+		log.Fatalf("Error al conectarse al GetName del Dns: %s", err)
 	}
-	log.Printf("Response from Server: %s", response.Body)
-	log.Printf(response.Body)
+	estado := strings.Split(response.Body , " ")
+	tipo_error := estado[len(estado)-1]
 
-	if response.Clock == nil {
-		return &CommandResponse{Body: "Error, aún no ha sido creado el dominio: " + domain + ".zf", Clock: nil}, nil
+	if tipo_error != "Nombre" && tipo_error != "Dominio" {
+		ip_id := response.Body + " " + strconv.Itoa(random_int)
+		clock_res := &ClockMessage{X: response.Clock.X, Y: response.Clock.Y, Z: response.Clock.Z}		
+		return &CommandResponse{Body: ip_id, Clock: clock_res}, nil
 	}
-
-	clock_res := &ClockMessage{X: response.Clock.X, Y: response.Clock.Y, Z: response.Clock.Z}
-	log.Printf(string(response.Clock.X))
-	return &CommandResponse{Body: response.Body, Clock: clock_res}, nil
+	return &CommandResponse{Body: response.Body, Clock: nil}, nil								
 }
 
 //////   Recibe Verbo     ///////

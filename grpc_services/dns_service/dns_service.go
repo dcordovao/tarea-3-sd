@@ -362,12 +362,10 @@ func (s *Server) GetName(ctx context.Context, nombre *NewName) (*CommandResponse
 
 	file_name := zf_folder_paths[nombre.IdDns] + "/" + nombre.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
-	if _, err := os.Stat(file_name); os.IsNotExist(err) {				
-		return &CommandResponse{Body: "Error, aún no ha sido creado el dominio: " + nombre.Domain + ".zf", Clock: nil}, nil
-		
+	if _, err := os.Stat(file_name); os.IsNotExist(err) {						
+		return &CommandResponse{Body: "Error, no existe el Dominio", Clock: nil}, nil
 	} else {
 		// Leer el archivo, leer linea por linea, y si el nombre no existe es tamos mal.}		
-
 		file, err := os.Open(file_name)
 		if err != nil {
 			log.Fatalf("failed opening file: %s", err)
@@ -383,7 +381,7 @@ func (s *Server) GetName(ctx context.Context, nombre *NewName) (*CommandResponse
 
 		file.Close()
 
-		ip_addr := ""
+		ip_addr := " "
 		for _, eachline := range txtlines[:] {
 			//fmt.Println(eachline)
 			lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
@@ -392,12 +390,12 @@ func (s *Server) GetName(ctx context.Context, nombre *NewName) (*CommandResponse
 				break
 			}
 		}			
-		if ip_addr {
+		if ip_addr != " " {
 			dom := strings.Split(nombre.Domain, ".")[0]
 			val := s.Relojes[dom]				
 			return &CommandResponse{Body: ip_addr, Clock: &ClockMessage{X: int64(val.X), Y: int64(val.Y), Z: int64(val.Z)}}, nil
 		} else {
-			return &CommandResponse{Body: "Error, el nombre no existe", Clock: &ClockMessage{X: 0, Y: 0, Z: 0}}, nil
+			return &CommandResponse{Body: "Error, no existe el Nombre", Clock: nil}, nil
 		}	
 	}		
 }
