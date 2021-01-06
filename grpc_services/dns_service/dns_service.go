@@ -137,25 +137,33 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandRespo
 
 		// Si el nombre no existia en el dominio no existia, se puede crear crea
 		if !previusly_created {
-			f, err := os.OpenFile(file_name, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+			
+
+			file, err := os.Open(file_name)
 			if err != nil {
-				panic(err)
+				log.Fatalf("failed opening file: %s", err)
 			}
 
-			scanner := bufio.NewScanner(f)
+			scanner := bufio.NewScanner(file)
 			scanner.Split(bufio.ScanLines)
 			var txtlines []string
 
 			for scanner.Scan() {
 				txtlines = append(txtlines, scanner.Text())
 			}
+
+			file.Close()
 			var salto string;
-			if len(txtlines) == 0 || txtlines[0] == "\n"{
+			if len(txtlines) == 0{
 				salto = ""
 			} else {
 				salto = "\n"
-			}			
+			}
 
+			f, err := os.OpenFile(file_name, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+			if err != nil {
+				panic(err)
+			}
 
 			if _, err = f.WriteString(salto + nombre.Name + "." + nombre.Domain + " IN A " + nombre.Ip); err != nil {
 				panic(err)

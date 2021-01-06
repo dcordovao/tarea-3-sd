@@ -101,6 +101,8 @@ func main() {
 
 		// Primera vez, el resultado viene de una ip al azar 
 		r, err := s.Connect(context.Background(), &message)
+		random_id := strconv.Itoa(int(r.Iddns)+1)
+		fmt.Println("El broker eligio el dns de id: "+random_id+" con la ip: "+r.Ipdns)
 
 		
 		// Si el broker no le achunta a la maquina hay que revisar el reloj
@@ -117,11 +119,12 @@ func main() {
 			var id_dns int
 			var domain_clock ClockVector
 
+			// Cuando escogio la ip donde estaba el nombre.dom
 			if tipo_error != "Nombre" && tipo_error != "Dominio" {
 				domain_clock = clock_to_struct(r.Clock)					
-				ip_connection = strings.Split(r.Body, " ")[0]
-				id_dns, _ = strconv.Atoi(strings.Split(r.Body, " ")[1])
-				fmt.Println(r.Body, "[", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")					
+				ip_connection = strings.Split(r.Body, " ")[0]				
+				id_dns = int(r.Iddns)
+				fmt.Println(r.Body, "Reloj: [", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")					
 			} else {
 				fmt.Println(r.Body)
 				// MONOTONIC READ
@@ -136,10 +139,10 @@ func main() {
 						}				
 
 						// Segunda vez, el resultado viene de ip obtenida ultima vez en el vectr 
+						fmt.Println("Esta version es anterior a la ultima modificada!")						
+						fmt.Println("Se cambio la conexion a la ultima ip vista para este dominio: " + strconv.Itoa(id_dns+1))//ip_connection)
 						r, err = s.Connect(context.Background(), &message)
-						fmt.Println(r.Body, "[", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")											
-						fmt.Println("Esta version es anterior a la ultima modificada!")
-						fmt.Println("Se cambio la conexion a la ultima ip vista para este dominio: " + strconv.Itoa(id_dns))//ip_connection)
+						fmt.Println(r.Body, "[", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")																	
 					}
 				}	
 			}	

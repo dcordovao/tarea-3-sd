@@ -46,13 +46,12 @@ func (s *Server) Connect(ctx context.Context, message *Message) (*CommandRespons
 	if len(strings.Split(message.Body, " ")) > 2 {
 		// Ya no es random
 		//random_ip = strings.Split(message.Body, " ")[1]		
-		random_int,_ = strconv.Atoi(strings.Split(message.Body, " ")[2])
-		random_ip = ips_dns[random_int]
+		random_int,_ = strconv.Atoi(strings.Split(message.Body, " ")[2])		
 		
 	} else {
-		random_int = rand.Intn(len(ips_dns))
-		random_ip = ips_dns[random_int]
+		random_int = rand.Intn(len(ips_dns))		
 	}
+	random_ip = ips_dns[random_int]
 
 	var conn_dns *grpc.ClientConn	
 
@@ -78,9 +77,10 @@ func (s *Server) Connect(ctx context.Context, message *Message) (*CommandRespons
 	if tipo_error != "Nombre" && tipo_error != "Dominio" {
 		ip_id := response.Body + " " + strconv.Itoa(random_int)
 		clock_res := &ClockMessage{X: response.Clock.X, Y: response.Clock.Y, Z: response.Clock.Z}		
-		return &CommandResponse{Body: ip_id, Clock: clock_res}, nil
+		return &CommandResponse{Body: ip_id, Clock: clock_res, Ipdns: random_ip, Iddns: int64(random_int)}, nil
 	}
-	return &CommandResponse{Body: response.Body, Clock: nil}, nil								
+	// No estaba
+	return &CommandResponse{Body: response.Body, Clock: nil, Ipdns: random_ip, Iddns: int64(random_int)}, nil								
 }
 
 //////   Recibe Verbo     ///////

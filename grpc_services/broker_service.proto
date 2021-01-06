@@ -21,6 +21,8 @@ message ClockMessage {
 message CommandResponse {
   string body = 1;
   ClockMessage clock = 2;
+  int64 iddns = 3;
+  string ipdns = 4;
 }
 
 
