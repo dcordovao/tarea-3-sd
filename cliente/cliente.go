@@ -159,9 +159,14 @@ func main() {
 					}				
 
 					// Segunda vez, el resultado viene de ip obtenida ultima vez en el vectr 					
-					fmt.Println("Se cambio la conexion a la ultima ip vista para este dominio: " + strconv.Itoa(id_dns+1))//ip_connection)
+					fmt.Println("Se cambio la conexion a la ultima ip vista para este dominio: " + strconv.Itoa(id_dns+1))
 					r, err = s.Connect(context.Background(), &message)
-					fmt.Println(r.Body, "[", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")																					
+					if r.Clock != nil {
+						fmt.Println(r.Body, "[", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")																											
+					} else {
+						fmt.Printf("El sitio "+params[1]+" ha sido eliminado")
+					}
+					
 				}	
 			}	
 			if r.Clock != nil {		

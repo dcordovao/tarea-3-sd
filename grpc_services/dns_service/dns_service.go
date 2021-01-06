@@ -261,7 +261,7 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*CommandR
 
 		// Enviar reloj como respuesta
 		ultimo_reloj := s.Relojes[update_info.Domain]
-		fmt.Println("Se creo con exito! Reloj dominio " + update_info.Domain + ": " + reloj_a_string(ultimo_reloj))
+		fmt.Println("Se creo con modifico! Reloj dominio " + update_info.Domain + ": " + reloj_a_string(ultimo_reloj))
 		reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
 		return &CommandResponse{Body: "Información actualizada con exito!", Clock: reloj_mensaje}, nil
 
@@ -339,7 +339,7 @@ func (s *Server) Delete(ctx context.Context, delete_info *DeleteInfo) (*CommandR
 
 		// Enviar reloj como respuesta
 		ultimo_reloj := s.Relojes[delete_info.Domain]
-		fmt.Println("Se creo con exito! Reloj dominio " + delete_info.Domain + ": " + reloj_a_string(ultimo_reloj))
+		fmt.Println("Se creo con elimino! Reloj dominio " + delete_info.Domain + ": " + reloj_a_string(ultimo_reloj))
 		reloj_mensaje := &ClockMessage{X: int64(ultimo_reloj.X), Y: int64(ultimo_reloj.Y), Z: int64(ultimo_reloj.Z)}
 
 		// Se escribe el cambio en el log
