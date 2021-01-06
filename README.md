@@ -33,19 +33,39 @@ El sistema consiste en:
 ##Supuestos y explicaciones importantes en la tarea:
 
 	+ DNS
-		+ Explicación:
+		+ Explicación: 
+			+ Create nombre
+				+ Si no existe el dominio para ese nombre crea los archivos <dominio.zf> y <dominio.log>, se añade el nombre al <dominio.zf> y se agrega el comando al <dominio.log>.
+				+ Si ya existe el dominio pero no el nombre, se añade el nombre al <dominio.zf> y se agrega el comando al <dominio.log>.
+				+ Si ya existe el dominio y el nombre, no se agrega ni se crea nada y se retorna un mensaje de alerta auto descriptivo.
+
+			+ Update nombre
+				+ Si el nombre y el dominio existen, cada linea del archivo <dominio.zf> respectivo se guarda en una lista, y la posición del nombre en el archivo se guarda en una variable. Luego el archivo se borra y se vuelve a crear pero esta vez actualizando el nombre en la posición previamente guardada. Luego se agrega la operacion al log.
+
+			+ Delete nombre
+				+ Si el nombre y el dominio existen, cada linea del archivo <dominio.zf> respectivo se guarda en una lista, excepto el elemento que se va a borrar. Luego el archivo se borra y se vuelve a crear pero esta vez el elemento ya no esta en la lista, por lo tanto su linea en el archivo ya no existe. Luego se agrega la operacion al log.
+
 
 		+ Supuestos:
 
+
 	+ Broker
 		+ Explicación:
+			+ Redirige la conexion entre el Cliente y los DNS, en primera instancia de froma aleatoria, después de forma determinada (ver explicación del cliente)
+			+ Entrega ip de DNS al azar al administrador. 
 
 		+ Supuestos: 
 
+
 	+ Administrador(es)
-		+ Explicación:
+		+ Explicación: 
+			+ Se ingresa y valida el comando escogido.
+			+ Se envia la solicitud al broker
+			+ El broker retorna una ip al azar y luego el admin se conecta directamente al dns escogido.
+			+ Se verifica que los relojes calcen con el ultimo leido guardado en memoria, si no se cumple, o el ip otorgado por el broker no coincide con la instrucción que se desea ejecutar, entonces se utiliza la ip asociada al dominio que se quiere crear, actualizar o borrar. 
 
 		+ Supuestos:	
+
 
 	+ Cliente(s)
 		+ Explicación: 			
@@ -53,7 +73,7 @@ El sistema consiste en:
 			+ Se envía la solicitud al broker.
 			+ El broker retorna la respuesta del dns al azar de vuelta al cliente.
 			+ Si se encontró lo solicitado, el cliente imprime ip y vector, luego compara dicho vector con el que se halla su diccionario de dominio:(reloj, ip) para ver que sea el ultimo, si esta desactualizado envia la solicitud nuevamente al broker, pero con la ip del dicionario.
-			+ Si no lo encontró, envia la solicitud nuevamente al broker, pero con la ip del dicionario.
+			+ Si no lo encontró, envia la solicitud nuevamente al broker pero con la ip del dicionario el cliente. Luego si no esta, significa que fue recientemente borrado, de lo contrario imprime ip y actualiza vector.
 
 		+ Supuestos: solo se recuerda el reloj de las lecturas que tuvieron exito, es decir en las cuales se encontró el nombre.dominio requerido.
 
