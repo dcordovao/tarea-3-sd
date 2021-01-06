@@ -99,10 +99,10 @@ func main() {
 			Body: input,
 		}
 
-		/// validar opcion 1
+		/// validar create
 		if option == "create" {
 			if len(params) != 3 {
-				log.Printf("Cuidado!, comando create debería tener 2 parametros...")
+				log.Printf("Cuidado!, comando create debería tener 2 parametros de la forma 'create <nombre.dominio> <ip>'... ")
 				continue
 			}
 
@@ -124,20 +124,52 @@ func main() {
 			}
 		}
 
-		/// validar opcion 2
+		/// validar update
 		if option == "update" {
 			if len(params) != 4 {
-				log.Printf("Cuidado!, comando update debería tener 3 parametros...")
+				log.Printf("Cuidado!, comando update debería tener 3 parametros de la forma 'update <nombre.dominio> <ip or name> <value>'... ")
+				continue
+			}
+			// validar nombre.dominio
+			if len(strings.Split(params[1], ".")) != 2 {
+				log.Printf("Cuidado!, nombre.dominio mal formateado...")
+				continue
+			}
+
+			if params[2] == "name" {
+				if len(strings.Split(params[3], ".")) != 2 {
+					log.Printf("Cuidado! value=nombre.dominio mal formateado...")
+					continue
+				}
+			} else if params[2] == "ip" {
+				new_ip := params[3]
+				booleano := checkIPAddress(new_ip)
+				if !booleano {
+					log.Printf("Fallo en checkIPAddress: " + strconv.FormatBool(booleano))
+					continue
+				}
+			} else {
+				log.Printf("Cuidado! el tercer parametro del comando update debe ser 'name' o 'ip'")
 				continue
 			}
 		}
 
-		/// validar opcion 3
+		/// validar delete
 		if option == "delete" {
 			if len(params) != 2 {
-				log.Printf("Cuidado!, comando delete debería tener 2 parametros...")
+				log.Printf("Cuidado!, comando delete debería tener 1 parametros de la forma 'delete <nombre.dominio>'")
 				continue
 			}
+			// validar nombre.dominio
+			if len(strings.Split(params[1], ".")) != 2 {
+				log.Printf("Cuidado!, nombre.dominio mal formateado...")
+				continue
+			}
+		}
+
+		if option != "delete" && option != "create" && option != "update" {
+			log.Printf("Cuidado!, ese comando no existe... !")
+			continue
 		}
 
 		response, err := broker.EnviarVerbo(context.Background(), &message)
