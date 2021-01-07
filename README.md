@@ -42,16 +42,11 @@ Diego Córdova Opazo 201403009-6
 		+ Si el nombre y el dominio existen, cada linea del archivo <dominio.zf> respectivo se guarda en una lista, excepto el elemento que se va a borrar. Luego el archivo se borra y se vuelve a crear pero esta vez el elemento ya no esta en la lista, por lo tanto su linea en el archivo ya no existe. Luego se agrega la operacion al log.
 
 
-+ Supuestos:
-
 
 + Broker
 + Explicación:
 	+ Redirige la conexion entre el Cliente y los DNS, en primera instancia de froma aleatoria, después de forma determinada (ver explicación del cliente)
 	+ Entrega ip de DNS al azar al administrador. 
-
-+ Supuestos: 
-
 
 + Administrador(es)
 + Explicación: 
@@ -65,8 +60,6 @@ Diego Córdova Opazo 201403009-6
 	+ El broker retorna una ip al azar y luego el admin se conecta directamente al dns escogido.
 	+ Se verifica que los relojes calcen con el ultimo leido guardado en memoria, si no se cumple, o el ip otorgado por el broker no coincide con la instrucción que se desea ejecutar, entonces se utiliza la ip asociada al dominio que se quiere crear, actualizar o borrar. 
 
-+ Supuestos:	
-
 
 + Cliente(s)
 	+ Explicación: 			
@@ -77,6 +70,9 @@ Diego Córdova Opazo 201403009-6
 		+ Si no lo encontró, envia la solicitud nuevamente al broker pero con la ip del dicionario el cliente. Luego si no esta, significa que fue recientemente borrado, de lo contrario imprime ip y actualiza vector.
 
 	+ Supuestos: solo se recuerda el reloj de las lecturas que tuvieron exito, es decir en las cuales se encontró el nombre.dominio requerido.
+
+
+OBS: Al cerrar un programa que se corrio con make, salta un error que no pudimos solucionar, pero es netamente del make y no incluye en la tarea
 
 ## Monotonic Read
 

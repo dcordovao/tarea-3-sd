@@ -12,10 +12,7 @@ clean:
 .PHONY: admin
 
 cliente:
-    go run cliente/cliente.go 
-
-#broker:
-    #go run broker/broker_server.go 
+    go run cliente/cliente.go
 
 admin:
     go run admin/admin.go 

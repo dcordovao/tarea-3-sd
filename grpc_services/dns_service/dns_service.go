@@ -13,11 +13,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-const ip_dns_1_1 = ":9001" //"10.10.28.121:9000"
-
-const zf_folder_path_1 = "servidor_dns/zf_files1"
-const zf_folder_path_2 = "servidor_dns/zf_files2"
-const zf_folder_path_3 = "servidor_dns/zf_files3"
+const zf_folder_path_1 = "servidor_dns/zf_files"
+const zf_folder_path_2 = "servidor_dns/zf_files"
+const zf_folder_path_3 = "servidor_dns/zf_files"
 
 var zf_folder_paths = []string{zf_folder_path_1, zf_folder_path_2, zf_folder_path_3}
 

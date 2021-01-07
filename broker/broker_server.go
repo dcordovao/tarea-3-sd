@@ -26,9 +26,8 @@ func main() {
 	grpcServer := grpc.NewServer()
 	broker_service.RegisterBrokerServiceServer(grpcServer, &s)
 
-	////// Servicio de clientes ///////
 	go func() {
-
+		////// Loop para resetear ///////
 		var conn *grpc.ClientConn
 		conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 		if err != nil {

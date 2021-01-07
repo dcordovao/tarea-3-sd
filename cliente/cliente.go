@@ -12,8 +12,8 @@ import (
 	//"io"
 	"fmt"
 	"os"
-	"strings"
 	"strconv" // Conversion de strings a int y viceversa
+	"strings"
 )
 
 type ClockVector struct {
@@ -40,10 +40,10 @@ func compare_clocks(new_clock ClockVector, last_clock ClockVector) bool {
 func main() {
 
 	//------------------------------------------------------
-	//////// Conectarse como cliente al NameService ////////
+	//////// Conectarse como cliente al broker ////////
 	//------------------------------------------------------
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	conn, err := grpc.Dial("10.10.28.124:9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Could not connect: %s", err)
 	}
@@ -88,32 +88,31 @@ func main() {
 		params := strings.Split(input, " ")
 
 		if len(params) != 2 {
-			fmt.Println("Cuidado!, comando get debería tener 1 parametro...\n")
+			fmt.Println("Cuidado!, comando get debería tener 1 parametro...")
+			fmt.Println("")
 			continue
 		}
 
 		message := broker_service.Message{
-			Body: params[1]+" ",
+			Body: params[1] + " ",
 		}
 
 		name := params[1]
 		name_split := strings.Split(name, ".")
 
-		// Primera vez, el resultado viene de una ip al azar 
+		// Primera vez, el resultado viene de una ip al azar
 		r, err := s.Connect(context.Background(), &message)
-		random_id := strconv.Itoa(int(r.Iddns)+1)
-		fmt.Println("El broker eligio el dns de id: "+random_id+" con la ip: "+r.Ipdns)
+		random_id := strconv.Itoa(int(r.Iddns) + 1)
+		fmt.Println("El broker eligio el dns de id: " + random_id + " con la ip: " + r.Ipdns)
 
-		
 		// Si el broker no le achunta a la maquina hay que revisar el reloj
 		// y pasar al broker la ip donde si esta el nombre.dominio
-		if err != nil {			
+		if err != nil {
 			log.Fatalf("Error al conectarse al Connect del Broker: %s", err)
 		} else {
 
-			estado := strings.Split(r.Body , " ")
+			estado := strings.Split(r.Body, " ")
 			tipo_error := estado[len(estado)-1]
-
 
 			var ip_connection string
 			var id_dns int
@@ -121,13 +120,13 @@ func main() {
 
 			// Cuando escogio la ip donde estaba el nombre.dom
 			if tipo_error != "Nombre" && tipo_error != "Dominio" {
-				domain_clock = clock_to_struct(r.Clock)					
-				ip_connection = strings.Split(r.Body, " ")[0]				
+				domain_clock = clock_to_struct(r.Clock)
+				ip_connection = strings.Split(r.Body, " ")[0]
 				id_dns = int(r.Iddns)
 				fmt.Println(r.Body, "Reloj: [", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")
 
 				// MONOTONIC READ
-				// Si es que existe un vector visto por el cliente en ese dominio	
+				// Si es que existe un vector visto por el cliente en ese dominio
 				if latest_clock, ok := clientClocks[name_split[1]]; ok {
 					if !compare_clocks(domain_clock, latest_clock.vector) {
 						// Cambiar la conexion a la ultima ip vista
@@ -135,43 +134,43 @@ func main() {
 						id_dns = latest_clock.idDns
 
 						message := broker_service.Message{
-							Body: params[1] +" "+ ip_connection +" "+ strconv.Itoa(id_dns),
-						}				
+							Body: params[1] + " " + ip_connection + " " + strconv.Itoa(id_dns),
+						}
 
-						// Segunda vez, el resultado viene de ip obtenida ultima vez en el vectr 
-						fmt.Println("Esta version es anterior a la ultima leída!")						
-						fmt.Println("Se cambio la conexion a la ultima ip vista para este dominio: " + strconv.Itoa(id_dns+1))//ip_connection)
+						// Segunda vez, el resultado viene de ip obtenida ultima vez en el vectr
+						fmt.Println("Esta version es anterior a la ultima leída!")
+						fmt.Println("Se cambio la conexion a la ultima ip vista para este dominio: " + strconv.Itoa(id_dns+1)) //ip_connection)
 						r, err = s.Connect(context.Background(), &message)
 						fmt.Println(r.Body, "Reloj: [", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")
-					}	
-				}	
-			// Cuando falla debe revisar si está en otro dns		
+					}
+				}
+				// Cuando falla debe revisar si está en otro dns
 			} else {
 				fmt.Println(r.Body)
-							
-				if latest_clock, ok := clientClocks[name_split[1]]; ok {					
-					
+
+				if latest_clock, ok := clientClocks[name_split[1]]; ok {
+
 					ip_connection = latest_clock.ip
 					id_dns = latest_clock.idDns
 
 					message := broker_service.Message{
-						Body: params[1] +" "+ ip_connection +" "+ strconv.Itoa(id_dns),
-					}				
+						Body: params[1] + " " + ip_connection + " " + strconv.Itoa(id_dns),
+					}
 
-					// Segunda vez, el resultado viene de ip obtenida ultima vez en el vectr 					
+					// Segunda vez, el resultado viene de ip obtenida ultima vez en el vectr
 					fmt.Println("Se cambio la conexion a la ultima ip vista para este dominio: " + strconv.Itoa(id_dns+1))
 					r, err = s.Connect(context.Background(), &message)
 					if r.Clock != nil {
-						fmt.Println(r.Body, "[", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")																											
+						fmt.Println(r.Body, "[", r.Clock.X, r.Clock.Y, r.Clock.Z, "]")
 					} else {
-						fmt.Printf("El sitio "+params[1]+" ha sido eliminado")
+						fmt.Printf("El sitio " + params[1] + " ha sido eliminado")
 					}
-					
-				}	
-			}	
-			if r.Clock != nil {		
-				clientClocks[name_split[1]] = clientSeenClock{vector: clock_to_struct(r.Clock), ip: ip_connection, idDns: id_dns}				
+
+				}
 			}
-		}				
+			if r.Clock != nil {
+				clientClocks[name_split[1]] = clientSeenClock{vector: clock_to_struct(r.Clock), ip: ip_connection, idDns: id_dns}
+			}
+		}
 	}
 }
