@@ -105,25 +105,86 @@ func (s *Server) PropagarCambios(ctx context.Context, message *Message) (*Messag
 	//var modificaciones = dns_service.Modificaciones
 
 	log.Println("Propagando cambios...")
-	var conn_dns *grpc.ClientConn
 
+	var conn_dns2 *grpc.ClientConn
 	//IP_DNS = ":9001" Esto cambia segun quien lo tiene
-	conn_dns, err := grpc.Dial(ip_dns_2, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("Could not connect: %s", err)
+	conn_dns2, err2 := grpc.Dial(ip_dns_2, grpc.WithInsecure())
+	if err2 != nil {
+		log.Fatalf("Could not connect: %s", err2)
 	}
-	defer conn_dns.Close()
+	defer conn_dns2.Close()
 
 	// Mensage que llego desde el cliente
 
-	s_dns := dns_service.NewDnsServiceClient(conn_dns)
+	s_dns2 := dns_service.NewDnsServiceClient(conn_dns2)
 
-	id_dns := dns_service.IdDns{IdDns: 1}
-	response, err := s_dns.PropagarCambios(context.Background(), &id_dns)
-	if err != nil {
-		log.Fatalf("Error al pedir al servidor 2 que propague camibios: %s", err)
+	id_dns2 := dns_service.IdDns{IdDns: 1, IpDns: ip_dns_1}
+	response2, err2 := s_dns2.PropagarCambios(context.Background(), &id_dns2)
+	if err2 != nil {
+		log.Fatalf("Error al pedir al servidor 2 que propague camibios: %s", err2)
 	}
-	log.Println("Respuesta servidor 2:", response.Body)
+	log.Println("Respuesta servidor 2:", response2.Body)
+
+	var conn_dns3 *grpc.ClientConn
+	//IP_DNS = ":9001" Esto cambia segun quien lo tiene
+	conn_dns3, err3 := grpc.Dial(ip_dns_3, grpc.WithInsecure())
+	if err3 != nil {
+		log.Fatalf("Could not connect: %s", err3)
+	}
+	defer conn_dns3.Close()
+
+	// Mensage que llego desde el cliente
+
+	s_dns3 := dns_service.NewDnsServiceClient(conn_dns3)
+
+	id_dns3 := dns_service.IdDns{IdDns: 2, IpDns: ip_dns_1}
+	response3, err3 := s_dns3.PropagarCambios(context.Background(), &id_dns3)
+	if err3 != nil {
+		log.Fatalf("Error al pedir al servidor 3 que propague camibios: %s", err3)
+	}
+	log.Println("Respuesta servidor 3:", response3.Body)
+
+	////////// PEDIR AL SERVIDOR 1 QUE MANDE LOS ZF A LOS SERVIDORES 2 y 3
+	var conn_dns1 *grpc.ClientConn
+	//IP_DNS = ":9001" Esto cambia segun quien lo tiene
+	conn_dns1, err1 := grpc.Dial(ip_dns_1, grpc.WithInsecure())
+	if err1 != nil {
+		log.Fatalf("Could not connect: %s", err1)
+	}
+	defer conn_dns1.Close()
+
+	// Mensage que llego desde el cliente
+
+	s_dns1 := dns_service.NewDnsServiceClient(conn_dns1)
+
+	target_ips := dns_service.TargetIps{IdDns: 0, Ip1: ip_dns_1, Ip2: ip_dns_2}
+	response1, err1 := s_dns1.PropagarZfs(context.Background(), &target_ips)
+	if err1 != nil {
+		log.Fatalf("Error al pedir al servidor 1 envie los zf: %s", err3)
+	}
+	log.Println("Respuesta servidor 3:", response1.Body)
+
+	// Pedir a los server que borren sus logs
+	id1 := dns_service.IdDns{IdDns: 0, IpDns: ip_dns_1}
+	r1, err1 := s_dns1.EliminarLogs(context.Background(), &id1)
+	if err1 != nil {
+		log.Fatalf("Error al pedir al servidor 1 envie los zf: %s", err1)
+	}
+	log.Println("Respuesta servidor 3:", r1.Body)
+
+	id2 := dns_service.IdDns{IdDns: 1, IpDns: ip_dns_2}
+	r2, err2 := s_dns2.EliminarLogs(context.Background(), &id2)
+	if err2 != nil {
+		log.Fatalf("Error al pedir al servidor 1 envie los zf: %s", err2)
+	}
+	log.Println("Respuesta servidor 3:", r2.Body)
+
+	id3 := dns_service.IdDns{IdDns: 2, IpDns: ip_dns_3}
+	r3, err2 := s_dns3.EliminarLogs(context.Background(), &id3)
+	if err3 != nil {
+		log.Fatalf("Error al pedir al servidor 1 envie los zf: %s", err3)
+	}
+	log.Println("Respuesta servidor 3:", r3.Body)
 
 	return &Message{Body: "Saludos desde broker_server! "}, nil
 }

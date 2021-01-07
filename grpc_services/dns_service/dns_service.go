@@ -411,54 +411,6 @@ func (s *Server) GetName(ctx context.Context, nombre *NewName) (*CommandResponse
 	}
 }
 
-func (s *Server) PedirModificaciones(ctx context.Context, id_dns *IdDns) (*Modificaciones, error) {
-	zf_path := zf_folder_paths[id_dns.IdDns]
-	var log_files []string
-	//En esta map se guardaran los dominios con una lista de los nombres modificados por dominio
-	//var modificaciones map[string][]string
-	//modificaciones = make(map[string][]string)
-	err := filepath.Walk(zf_path, func(path string, info os.FileInfo, err error) error {
-		if filepath.Ext(path) == ".logs" {
-			log_files = append(log_files, path)
-		}
-		return nil
-	})
-	if err != nil {
-		panic(err)
-	}
-	// leer cada archivo logs
-
-	/*
-		for _, file := range log_files {
-			file_name := zf_folder_paths[id_dns.IdDns] + "/" + file
-			file, err := os.Open(file_name)
-			if err != nil {
-				log.Fatalf("failed opening file: %s", err)
-			}
-
-			scanner := bufio.NewScanner(file)
-			scanner.Split(bufio.ScanLines)
-			var txtlines []string
-
-			for scanner.Scan() {
-				txtlines = append(txtlines, scanner.Text())
-			}
-
-			file.Close()
-
-			for _, eachline := range txtlines[:] {
-				//fmt.Println(eachline)
-				lname := strings.Split(strings.Split(eachline, " ")[0], ".")[0]
-
-
-			}
-			return previusly_created
-		} */
-
-	retorno := []*ModsDominio{}
-	return &Modificaciones{Dominios: retorno}, nil
-}
-
 func (s *Server) PropagarCambios(ctx context.Context, id_dns *IdDns) (*Message, error) {
 	zf_path := zf_folder_paths[id_dns.IdDns]
 	var log_files []string
@@ -499,7 +451,7 @@ func (s *Server) PropagarCambios(ctx context.Context, id_dns *IdDns) (*Message, 
 
 		// Conectarse al dns 1 para enviarle los cambios
 		var conn_dns *grpc.ClientConn
-		conn_dns, err = grpc.Dial(ip_dns_1_1, grpc.WithInsecure())
+		conn_dns, err = grpc.Dial(id_dns.IpDns, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("Could not connect: %s", err)
 		}
@@ -556,4 +508,127 @@ func (s *Server) PropagarCambios(ctx context.Context, id_dns *IdDns) (*Message, 
 	}
 	fmt.Println("Cambios enviados al server 1 con exito.")
 	return &Message{Body: "Cambios enviados al server 1 con exito."}, nil
+}
+
+func (s *Server) SobreescribirZf(ctx context.Context, zf_file *ZfFile) (*Message, error) {
+	aux_split := strings.Split(zf_file.Nombre, "\\")
+	name := aux_split[len(aux_split)-1]
+	file_name := zf_folder_paths[zf_file.IdDns] + "/" + name
+	f, err := os.Create(file_name)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer f.Close()
+	f.WriteString(zf_file.Contenido)
+	return &Message{Body: "ZFfile sobreescrita en server con exito."}, nil
+}
+
+// Funcion que solo es llamada por el servidor 1 envia los cambios al resto de servidores
+func (s *Server) PropagarZfs(ctx context.Context, target_ips *TargetIps) (*Message, error) {
+
+	zf_path := zf_folder_paths[target_ips.IdDns]
+	var zf_files []string
+
+	fmt.Println("Enviando ZFs al servidor 2...")
+
+	err := filepath.Walk(zf_path, func(path string, info os.FileInfo, err error) error {
+		if filepath.Ext(path) == ".zf" {
+			zf_files = append(zf_files, path)
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	var conn_dns2 *grpc.ClientConn
+	conn_dns2, err = grpc.Dial(target_ips.Ip1, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Could not connect: %s", err)
+	}
+	defer conn_dns2.Close()
+
+	s_dns2 := NewDnsServiceClient(conn_dns2)
+
+	var conn_dns3 *grpc.ClientConn
+	conn_dns3, err = grpc.Dial(target_ips.Ip2, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Could not connect: %s", err)
+	}
+	defer conn_dns3.Close()
+
+	s_dns3 := NewDnsServiceClient(conn_dns3)
+
+	// leer cada archivo zf y ejecutar cada comando en el server 2 y 3
+	for _, file := range zf_files {
+		file_name := file
+		file, err := os.Open(file_name)
+		if err != nil {
+			log.Fatalf("failed opening file: %s", err)
+		}
+
+		fmt.Println("Leyendo " + file.Name() + " ...")
+
+		scanner := bufio.NewScanner(file)
+		scanner.Split(bufio.ScanLines)
+		var txtlines string = ""
+
+		for scanner.Scan() {
+			if txtlines == "" {
+				txtlines = txtlines + scanner.Text()
+			} else {
+				txtlines = txtlines + "\n" + scanner.Text()
+			}
+
+		}
+
+		// enviar los cambios a los dns 2 y3
+		log.Println("Enviando " + file_name + " al server 2...")
+		var zf_file2 = ZfFile{IdDns: 1, Nombre: file_name, Contenido: txtlines}
+		response, err := s_dns2.SobreescribirZf(context.Background(), &zf_file2)
+		if err != nil {
+			log.Fatalf("Error al tratar sobreescribir nombre: %s", err)
+		}
+		fmt.Printf("Response from Server: %s\n", response.Body)
+
+		log.Println("Enviando " + file_name + " al server 3...")
+		var zf_file3 = ZfFile{IdDns: 2, Nombre: file_name, Contenido: txtlines}
+		response, err = s_dns3.SobreescribirZf(context.Background(), &zf_file3)
+		if err != nil {
+			log.Fatalf("Error al tratar sobreescribir nombre: %s", err)
+		}
+		fmt.Printf("Response from Server: %s\n", response.Body)
+
+		file.Close()
+	}
+
+	// Leer todos los .zf
+	return &Message{Body: "ZFfile sobreescrita en server con exito."}, nil
+}
+
+func (s *Server) EliminarLogs(ctx context.Context, id_dns *IdDns) (*Message, error) {
+	zf_path := zf_folder_paths[id_dns.IdDns]
+	var log_files []string
+	//En esta map se guardaran los dominios con una lista de los nombres modificados por dominio
+	//var modificaciones map[string][]string
+	//modificaciones = make(map[string][]string)
+
+	fmt.Println("Eliminando todos los logs.")
+
+	err := filepath.Walk(zf_path, func(path string, info os.FileInfo, err error) error {
+		if filepath.Ext(path) == ".log" {
+			log_files = append(log_files, path)
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	// leer cada archivo logs y ejecutar cada comando en el server 1
+	for _, file := range log_files {
+		os.Remove(file)
+	}
+
+	return &Message{Body: "Logs eliminados..."}, nil
 }
