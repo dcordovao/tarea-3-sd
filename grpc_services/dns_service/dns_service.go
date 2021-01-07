@@ -485,8 +485,13 @@ func (s *Server) PropagarCambios(ctx context.Context, id_dns *IdDns) (*Message, 
 				// Si el reloj recibido no es nulo, se guarda como ultimo reloj de ese dominio
 			}
 			if option == "update" {
-
-				update_info := UpdateInfo{Name: name_split[0], Domain: name_split[1], Opt: params[2], Value: params[3], IdDns: int64(0)}
+				var option string
+				if len(strings.Split(params[2], ".")) == 4 {
+					option = "ip"
+				} else {
+					option = "name"
+				}
+				update_info := UpdateInfo{Name: name_split[0], Domain: name_split[1], Opt: option, Value: params[2], IdDns: int64(0)}
 
 				response, err := s_dns1.Update(context.Background(), &update_info)
 				if err != nil {

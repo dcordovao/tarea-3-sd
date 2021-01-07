@@ -39,8 +39,8 @@ func main() {
 		broker := broker_service.NewBrokerServiceClient(conn)
 		message := broker_service.Message{Body: "propagate"}
 		for true {
-			// Dormir hasta realizar propagacion
-			time.Sleep(40 * time.Second)
+			// Dormir hasta realizar propagacion, esperar 5 min
+			time.Sleep(300 * time.Second)
 			response, err := broker.PropagarCambios(context.Background(), &message)
 			if err != nil {
 				log.Fatalf("Error propagar cambios: %s", err)

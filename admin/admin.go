@@ -264,9 +264,13 @@ func main() {
 
 			response, err := s_dns.Update(context.Background(), &update_info)
 			if err != nil {
-				log.Fatalf("Error al tratar de crear nombre: %s", err)
+				log.Fatalf("Error al tratar de updatear nombre: %s", err)
 			}
 			log.Printf("Response from Server: %s", response.Body)
+			// Si el reloj recibido no es nulo, se guarda como ultimo reloj de ese dominio
+			if response.Clock != nil {
+				adminClocks[update_info.Domain] = SeenClock{vector: clock_to_struct(response.Clock), ip: ip_connection, idDns: id_dns}
+			}
 		}
 
 		/// OPCION 3:
@@ -279,6 +283,10 @@ func main() {
 				log.Fatalf("Error al tratar eliminar nombre: %s", err)
 			}
 			log.Printf("Response from Server: %s", response.Body)
+			// Si el reloj recibido no es nulo, se guarda como ultimo reloj de ese dominio
+			if response.Clock != nil {
+				adminClocks[delete_info.Domain] = SeenClock{vector: clock_to_struct(response.Clock), ip: ip_connection, idDns: id_dns}
+			}
 		}
 	}
 }
