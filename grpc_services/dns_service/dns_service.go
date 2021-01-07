@@ -25,7 +25,7 @@ type Server struct {
 
 // Esta funcion escribe en el log de un dominio, si no está, lo crea
 func DomainLog(Name string, Domain string, Ip string, op string, IdDns int64) {
-	file_name := zf_folder_paths[IdDns] + "/" + Domain + ".log"
+	file_name := zf_folder_path_1 + "/" + Domain + ".log"
 	// Chequear si el log del dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
 		log.Printf("Creando log: " + Domain + ".log")
