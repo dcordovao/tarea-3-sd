@@ -13,7 +13,7 @@ import (
 
 const zf_folder_path_1 = "servidor_dns/zf_files"
 
-var zf_folder_paths = []string{zf_folder_path_1}
+//var zf_folder_paths = []string{zf_folder_path_1}
 
 type ClockVector struct {
 	X, Y, Z int
@@ -112,7 +112,7 @@ func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, erro
 
 func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandResponse, error) {
 
-	file_name := zf_folder_paths[nombre.IdDns] + "/" + nombre.Domain + ".zf"
+	file_name := zf_folder_path_1 + "/" + nombre.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
 		log.Printf("Creando dominio: " + nombre.Domain + ".zf")
@@ -185,7 +185,7 @@ func (s *Server) CreateName(ctx context.Context, nombre *NewName) (*CommandRespo
 
 // Suponemos que al actualziar nombre, se da solo "nombre", y el dominio siempre se mantiene
 func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*CommandResponse, error) {
-	file_name := zf_folder_paths[update_info.IdDns] + "/" + update_info.Domain + ".zf"
+	file_name := zf_folder_path_1 + "/" + update_info.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
 		log.Println("Se trato de hacer update a un dominio no existente...")
@@ -270,7 +270,7 @@ func (s *Server) Update(ctx context.Context, update_info *UpdateInfo) (*CommandR
 
 // Suponemos que al actualziar nombre, se da solo "nombre", y el dominio siempre se mantiene
 func (s *Server) Delete(ctx context.Context, delete_info *DeleteInfo) (*CommandResponse, error) {
-	file_name := zf_folder_paths[delete_info.IdDns] + "/" + delete_info.Domain + ".zf"
+	file_name := zf_folder_path_1 + "/" + delete_info.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {
 		log.Println("Se trato de hacer delete a un dominio no existente...")
@@ -366,7 +366,7 @@ func (s *Server) GetName(ctx context.Context, nombre *NewName) (*CommandResponse
 	//----------- Y EL RELOJ VECTORIAL ASOCIADO -----------------//
 	//-----------------------------------------------------------//	
 
-	file_name := zf_folder_paths[nombre.IdDns] + "/" + nombre.Domain + ".zf"
+	file_name := zf_folder_path_1 + "/" + nombre.Domain + ".zf"
 	// Chequear si el dominio existe. Esto es true si no existe
 	if _, err := os.Stat(file_name); os.IsNotExist(err) {						
 		return &CommandResponse{Body: "Error, no existe el Dominio", Clock: nil}, nil
