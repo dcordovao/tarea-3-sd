@@ -1,18 +1,21 @@
 all:
-	#go run servidor_dns/servidor_dns.go 1
+	go run servidor_dns/servidor_dns.go
 
 firewall:
-	sudo systemctl start firewalld
+	sudo systemctl stop firewalld
 
 clean:
-	rm servidor_dns/zf_files/*.zf
-	rm servidor_dns/zf_files/*.log	
+    rm servidor_dns/zf_files/*.zf
+    rm servidor_dns/zf_files/*.log  
 
-#cliente:
-	#go run cliente/cliente.go 
+.PHONY: cliente
+.PHONY: admin
+
+cliente:
+    go run cliente/cliente.go 
 
 #broker:
-	#go run broker/broker_server.go 
+    #go run broker/broker_server.go 
 
-#admin:
-	#go run admin/admin.go 
+admin:
+    go run admin/admin.go 
