@@ -514,7 +514,7 @@ func (s *Server) PropagarCambios(ctx context.Context, id_dns *IdDns) (*Message, 
 }
 
 func (s *Server) SobreescribirZf(ctx context.Context, zf_file *ZfFile) (*Message, error) {
-	aux_split := strings.Split(zf_file.Nombre, "\\")
+	aux_split := strings.Split(zf_file.Nombre, "/")
 	name := aux_split[len(aux_split)-1]
 	file_name := zf_folder_paths[zf_file.IdDns] + "/" + name
 	f, err := os.Create(file_name)
