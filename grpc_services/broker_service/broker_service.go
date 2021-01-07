@@ -158,7 +158,7 @@ func (s *Server) PropagarCambios(ctx context.Context, message *Message) (*Messag
 
 	s_dns1 := dns_service.NewDnsServiceClient(conn_dns1)
 
-	target_ips := dns_service.TargetIps{IdDns: 0, Ip1: ip_dns_1, Ip2: ip_dns_2}
+	target_ips := dns_service.TargetIps{IdDns: 0, Ip1: ip_dns_2, Ip2: ip_dns_3}
 	response1, err1 := s_dns1.PropagarZfs(context.Background(), &target_ips)
 	if err1 != nil {
 		log.Fatalf("Error al pedir al servidor 1 envie los zf: %s", err3)
